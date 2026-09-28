@@ -1,0 +1,105 @@
+---
+export interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  image?: string;
+  type?: 'website' | 'article' | 'profile';
+  noindex?: boolean;
+  jsonLd?: unknown;
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  keywords?: string[];
+  siteVerification?: {
+    google?: string;
+    bing?: string;
+  };
+}
+
+export type SEOConfig = Required<Pick<Props, 'title' | 'description'>> & Partial<Props>;
+
+const {
+  title = 'Pico y Placa Hoy Colombia · picoyplaca.co',
+  description = 'Consulta el pico y placa de hoy en Bogotá, Medellín, Cali y todas las ciudades de Colombia. Dígitos restringidos, horarios, multas y recomendaciones oficiales.',
+  canonical,
+  image = 'https://picoyplaca.co/og-default.png',
+  type = 'website',
+  noindex = false,
+  jsonLd,
+  publishedTime,
+  modifiedTime,
+  author,
+  keywords = [],
+  siteVerification
+} = Astro.props;
+
+const canonicalUrl = new URL(canonical ?? Astro.url.pathname, Astro.site ?? 'https://picoyplaca.co').toString();
+const ogImage = new URL(image, Astro.site ?? 'https://picoyplaca.co').toString();
+const defaultKeywords = [
+  'pico y placa',
+  'pico y placa hoy',
+  'pico y placa colombia',
+  'pico y placa bogota',
+  'pico y placa medellin',
+  'pico y placa cali',
+  'restriccion vehicular colombia'
+];
+const allKeywords = Array.from(new Set([...defaultKeywords, ...keywords])).join(', ');
+---
+
+{noindex && <meta name="robots" content="noindex,nofollow" />}
+{!noindex && <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />}
+
+<title>{title}</title>
+<meta name="description" content={description} />
+{allKeywords.length > 0 && <meta name="keywords" content={allKeywords} />}
+<meta name="author" content={author ?? 'picoyplaca.co'} />
+
+<link rel="canonical" href={canonicalUrl} />
+
+<!-- Open Graph -->
+<meta property="og:locale" content="es_CO" />
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content="Pico y Placa Colombia" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:alt" content={title} />
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+{author && <meta property="article:author" content={author} />}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<!-- Search Console / Bing verifications (configurables desde .env o KV admin) -->
+{siteVerification?.google && <meta name="google-site-verification" content={siteVerification.google} />}
+{siteVerification?.bing && <meta name="msvalidate.01" content={siteVerification.bing} />}
+
+{import.meta.env.PUBLIC_BING_VERIFICATION_ID && <meta name="msvalidate.01" content={import.meta.env.PUBLIC_BING_VERIFICATION_ID} />}
+
+<!-- JSON-LD estructurado -->
+{jsonLd && (
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+)}
+
+<!-- JSON-LD por defecto: WebSite + Sitelinks Searchbox (home y páginas importantes) -->
+{(Astro.url.pathname === '/' || Astro.url.pathname.startsWith('/ciudades')) && (
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Pico y Placa Colombia',
+    url: 'https://picoyplaca.co/',
+    inLanguage: 'es-CO',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://picoyplaca.co/?ciudad={search_term_string}',
+      'query-input': 'required name=search_term_string'
+    }
+  })} />
+)}

@@ -1,0 +1,112 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import AdSlot from '@components/AdSlot.astro';
+import { FINE_CONFIG } from '@data/fines';
+---
+<BaseLayout
+  seo={{
+    title: 'Multa Pico y Placa 2026 · Valor UVB 52,29 ($633.111 COP)',
+    description: `Valor actualizado multa por incumplir el pico y placa en Colombia 2026: ${FINE_CONFIG.uvb2026} UVB ≈ $${FINE_CONFIG.amountCops2026.toLocaleString('es-CO')} COP. Descuento pronto pago 50%, educación vial y cómo recurrir el comparendo.`,
+    keywords: ['multa pico y placa 2026', 'valor multa pico y placa', 'uvb 2026', 'comparendo pico y placa', 'recurso reposicion multa']
+  }}
+>
+  <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Multa Pico y Placa 2026' }]} />
+  <article class="mx-auto max-w-4xl py-12">
+    <header class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-widest text-brand-700">Guía · Multas y Comparendos</p>
+      <h1 class="mt-2 text-3xl font-black md:text-5xl">Valor multa pico y placa en 2026: 52,29 UVB ≈ ${FINE_CONFIG.amountCops2026.toLocaleString('es-CO')} COP</h1>
+      <p class="mt-5 max-w-3xl text-lg text-slate-700">Actualización oficial UVB 2026. Conoce exactamente cuánto pagas si te toca un comparendo por violar la restricción vehicular, cómo aprovechar el 50% de descuento por pronto pago y en qué casos puedes recurrir sin pagar abogados.</p>
+    </header>
+
+    <AdSlot id="multa-top" size="leaderboard-728x90" text="Anuncio · multa pico y placa 2026" />
+
+    <section class="mt-10 grid gap-6 md:grid-cols-3">
+      <div class="card !p-6 text-center bg-brand-50 ring-brand-200">
+        <p class="text-xs font-bold uppercase text-brand-700 tracking-wider">UVB 2026</p>
+        <p class="mt-2 text-4xl font-black text-brand-900">{FINE_CONFIG.uvb2026}</p>
+        <p class="mt-1 text-xs text-brand-800">Unidad de Valor Tributario</p>
+      </div>
+      <div class="card !p-6 text-center">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Multa nominal</p>
+        <p class="mt-2 text-4xl font-black">${FINE_CONFIG.amountCops2026.toLocaleString('es-CO')}</p>
+        <p class="mt-1 text-xs text-slate-500">COP sin descuentos</p>
+      </div>
+      <div class="card !p-6 text-center bg-success-50 ring-success-200">
+        <p class="text-xs font-bold uppercase tracking-wider text-success-700">Pronto pago + Curso</p>
+        <p class="mt-2 text-4xl font-black text-success-900">${Math.round(FINE_CONFIG.amountCops2026 * 0.5).toLocaleString('es-CO')}</p>
+        <p class="mt-1 text-xs text-success-800">50% descuento (5 días hábiles)</p>
+      </div>
+    </section>
+
+    <div class="prose prose-slate mt-12 max-w-none">
+      <h2 class="text-2xl font-extrabold">¿Qué dice la normativa actual?</h2>
+      <p>Antes del 1 de enero de 2024, la multa por incumplir el pico y placa correspondía a <strong>{FINE_CONFIG.smdlv2025} SMDLV</strong> (Salarios Mínimos Diarios Legales Vigentes). Con la reforma tributaria y la reorganización de multas de tránsito (art. 136 literal 10 del Código Nacional de Tránsito <em>modificado</em>), el valor pasó a <strong>{FINE_CONFIG.uvb2026} UVB (Unidad de Valor Tributario)</strong> ajustada anualmente por inflación IPC.</p>
+
+      <blockquote class="mt-6 rounded-2xl border-l-4 border-brand-500 bg-slate-50 p-5 text-slate-700">
+        <p class="m-0 font-medium">{FINE_CONFIG.uvbDescription}</p>
+      </blockquote>
+
+      <h2 class="text-2xl font-extrabold mt-12">Desglose completo del comparendo</h2>
+      <ul>
+        {FINE_CONFIG.notes.map((n, i) => <li key={i}>{n}</li>)}
+      </ul>
+
+      <AdSlot id="multa-middle-1" size="auto-fluid" />
+
+      <h2 class="text-2xl font-extrabold mt-12">¿Cómo pagar y no pagar de más?</h2>
+      <ol>
+        <li>
+          <strong>Primeros 5 días hábiles (recomendado):</strong> curso de educación vial online gratuito (disponible en Simit y plataformas de la Secretaría) + pago anticipado. Obtienes <strong>50% de descuento automático</strong> sobre el valor bruto.
+        </li>
+        <li>
+          <strong>Días 6–20:</strong> descuento pronto pago reducido, sin beneficio del curso.
+        </li>
+        <li>
+          <strong>Después de 20 días hábiles:</strong> el comparendo pasa a cobro coactivo con intereses moratorios y gastos de notificación. Lo verás reflejado en la DIAN, RUNT y SIMIT.
+        </li>
+      </ol>
+
+      <h2 class="text-2xl font-extrabold mt-12">¿Cuándo y cómo recurrir el comparendo?</h2>
+      <p>Antes de pagar, valida si el comparendo tiene <strong>vicios de nulidad</strong> para interponer <em>Recurso de Reposición</em> (gratis, mismo funcionario que impuso) o <em>Apelación</em> ante Juzgado Administrativo de Tránsito:</p>
+
+      <h3 class="text-xl font-bold mt-6">Casos frecuentes de nulidad</h3>
+      <ul>
+        <li>La placa registrada no coincide exactamente con su documento de matrícula.</li>
+        <li>Falta firma, fecha, hora o lugar exacto de la infracción en la notificación.</li>
+        <li>No existía pico y placa activo ese día (festivo, fin de semana, jornada pedagógica, día sin carro con exención).</li>
+        <li>La fotocívica no muestra claramente la placa, el color, la línea y el modelo.</li>
+        <li>Vehículo eléctrico, servicios públicos, emergencia, personas con movilidad reducida o exención oficial vigente.</li>
+        <li>Inmovilización indebida sin documento de custodia (Policía de Tránsito / GRD).</li>
+      </ul>
+
+      <AdSlot id="multa-middle-2" size="auto-fluid" lazy />
+
+      <h2 class="text-2xl font-extrabold mt-12">¿Qué pasa si no pago?</h2>
+      <ul>
+        <li>❌ <strong>Reportes a centrales:</strong> incumplimiento crediticio en Datacrédito y Experian después de cobro coactivo.</li>
+        <li>❌ <strong>Trámite RUNT bloqueado:</strong> no podrá tramitar traspaso, SOAT, tecnomecánica o renovación de licencia.</li>
+        <li>❌ <strong>Embargo preventivo:</strong> la Secretaría de Movilidad puede inmovilizar su vehículo en operativos futuramente.</li>
+        <li>❌ <strong>Multa coactiva DIAN:</strong> hasta el 200% del valor inicial más gastos procesales.</li>
+      </ul>
+
+      <h2 class="text-2xl font-extrabold mt-12">Multas por ciudad (mismo UVB)</h2>
+      <p>El valor de 52,29 UVB es <strong>nacional</strong> (Código Nacional de Tránsito). Bogotá (SDM), Medellín (AMVA/Secretaría Movilidad), Cali, Barranquilla, Bucaramanga, Cartagena, Villavicencio, Manizales, Pereira, Santa Marta y demás municipios cobran exactamente la misma base. Lo que varía son los <strong>costos adicionales de inmovilización y grua</strong> (grúa + depósito).</p>
+
+      <h2 class="text-2xl font-extrabold mt-12">Preguntas frecuentes</h2>
+
+      <h3 class="text-lg font-bold">¿Todavía aplica la multa de 15 SMDLV antigua?</h3>
+      <p>No. Las multas emitidas después del 1 de enero de 2024 ya rigen por UVB. Si su comparendo es anterior a 2024, aplique la tabla histórica según el SMDLV vigente en la fecha de la infracción.</p>
+
+      <h3 class="text-lg font-bold">¿Placa solidaria / pico y placa solidario evita el comparendo?</h3>
+      <p>Sí. Si usted está matriculado y al día en el programa de <em>Pico y Placa Solidario</em> (Bogotá / algunas ciudades) puede circular libremente los días par/impar. Guarde el comprobante de pago y muéstrelo al funcionario si lo paran.</p>
+
+      <h3 class="text-lg font-bold">¿Taxis, buses, motos y carros pagan el mismo valor?</h3>
+      <p>Sí. Excepto modalidades especiales (ej. transporte público en rutas excepcionales autorizadas), el valor es el mismo: 52,29 UVB 2026.</p>
+    </div>
+
+    <AdSlot id="multa-bottom" size="auto-fluid" lazy />
+  </article>
+</BaseLayout>

@@ -1,0 +1,64 @@
+---
+import VehicleRestrictionCard from './VehicleRestrictionCard.astro';
+import AdSlot from './AdSlot.astro';
+import type { DailyRestriction } from '../lib/pico';
+import type { CityConfig } from '../types';
+import { ALL_KINDS } from '../data/cities';
+
+export interface Props {
+  city: CityConfig;
+  restriction: DailyRestriction;
+  dateLabel: string;
+}
+
+const { city, restriction, dateLabel } = Astro.props;
+const kinds = ALL_KINDS;
+---
+<section aria-labelledby="city-title">
+  <div class="mb-5 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-xs uppercase tracking-widest text-brand-700">📍 {city.department}</p>
+      <h2 id="city-title" class="text-2xl font-extrabold tracking-tight text-slate-900">
+        Pico y placa en {city.name}
+        <span class="ml-3 text-base font-medium text-slate-500">· {dateLabel}</span>
+      </h2>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      {restriction.isHoliday && (
+        <span class="badge bg-warning-50 text-warning-600 ring-1 ring-inset ring-warning-500/20">
+          🎉 Festivo: sin restricción
+        </span>
+      )}
+      {restriction.isWeekend && !restriction.isHoliday && (
+        <span class="badge bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-500/20">
+          🌤️ Fin de semana
+        </span>
+      )}
+      {restriction.warnings.length > 0 && (
+        <span class="badge bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-500/20">
+          ℹ️ {restriction.warnings.length} avisos
+        </span>
+      )}
+    </div>
+  </div>
+
+  {restriction.warnings.length > 0 && (
+    <ul class="mb-6 list-inside list-disc space-y-1 rounded-xl bg-amber-50 p-4 text-sm text-amber-800 ring-1 ring-inset ring-amber-500/20">
+      {restriction.warnings.map(w => <li>{w}</li>)}
+    </ul>
+  )}
+
+  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    {kinds.map(k => (
+      <VehicleRestrictionCard
+        kind={k}
+        entry={restriction.perVehicle[k]}
+        cityName={city.name}
+      />
+    ))}
+  </div>
+
+  <div class="mt-4">
+    <AdSlot id={`city-${city.slug}-mid`} size="leaderboard-728x90" text="Anuncio ciudad · AdSense" />
+  </div>
+</section>

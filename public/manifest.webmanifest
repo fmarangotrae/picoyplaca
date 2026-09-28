@@ -1,0 +1,57 @@
+{
+  "name": "Pico y Placa Colombia",
+  "short_name": "Pico y Placa",
+  "description": "Consulta diaria de restricciones vehiculares Pico y Placa en Bogotá, Medellín, Cali y principales ciudades de Colombia.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "lang": "es-CO",
+  "dir": "ltr",
+  "categories": ["transportation", "travel", "utilities"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Verificar mi placa",
+      "short_name": "Verificar",
+      "description": "Comprueba si tu placa tiene restricción hoy",
+      "url": "/#verificador",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Ciudades",
+      "short_name": "Ciudades",
+      "description": "Directorio de ciudades con Pico y Placa",
+      "url": "/ciudades",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Blog y guías",
+      "short_name": "Blog",
+      "description": "Consejos, multas y novedades de movilidad",
+      "url": "/blog",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ]
+}

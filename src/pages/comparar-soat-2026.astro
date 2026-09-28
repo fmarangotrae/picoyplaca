@@ -1,0 +1,103 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import AdSlot from '@components/AdSlot.astro';
+import { COMPARISON_SEED } from '@data/content-seed';
+
+const items = COMPARISON_SEED['comparar-soat-2026'];
+
+const faqItems = [
+  { q: '¿El SOAT 2026 ya salió? ¿Cuánto cuesta?', a: 'Sí. El tarifario SOAT 2026 está publicado en la Fasecolda y la Superfinanciera. Para carro particular cilindraje 1.000-1.600 cc ronda $520.000-$650.000 según aseguradora y descuentos aplicados por flete, accidentes y localidad.' },
+  { q: '¿Puedo comprar el SOAT por internet?', a: 'Sí. Todas las plataformas de esta comparativa emiten SOAT 100% digital autorizado RUNT, Fasecolda y Superfinanciera. Recibes el PDF al instante y no necesitas pegar calcomanía (no es obligatoria desde 2020).' },
+  { q: '¿Qué pasa si conduzco sin SOAT?', a: 'Comparendo tipo 02 por $633.111 COP (52,29 UVB 2026) + inmovilización. Además, en accidente la aseguradora NO cubre lesiones de terceros y tú respondes civil y penalmente.' },
+  { q: '¿Puedo comparar antes de renovar?', a: 'Sí. Puedes renovar con cualquier aseguradora aunque tengas SOAT vigente. El nuevo cubre a partir del día siguiente a la expiración; no pierdes días si cambias de compañía.' },
+  { q: '¿SOAT electrónico es válido?', a: 'Sí. El documento PDF digital (QR) tiene la misma validez jurídica que la calcomanía física. Policía y jueces lo consultan en el sistema RUNT con tu placa en segundos.' }
+];
+---
+<BaseLayout seo={{
+  title: 'Comparar SOAT 2026 Colombia · Precios y descuentos oficiales',
+  description: `Compara precios del SOAT 2026 en ${items.length}+ aseguradoras autorizadas. Emisión digital al instante RUNT, Superfinanciera y Fasecolda. Descuentos de hasta 18% por renovación anticipada.`,
+  keywords: ['comparar soat 2026', 'soat 2026 precio', 'mejor soat colombia', 'soat digital oficial']
+}}>
+  <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Comparativas' }, { label: 'SOAT 2026' }]} />
+  <article class="mx-auto max-w-5xl py-12">
+    <header class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-widest text-brand-700">💰 Comparativa Afiliada · Actualizada sep 2026</p>
+      <h1 class="mt-2 text-3xl font-black md:text-5xl">Comparar SOAT 2026: Precios, Descuentos y Emisión Digital</h1>
+      <p class="mt-4 max-w-3xl text-lg text-slate-700">Encuentra el SOAT más barato para tu carro, moto, taxi, carga o pasajeros. Todos los proveedores son entidades autorizadas oficialmente. Cubre accidentes de tránsito (lesiones, muerte, gastos médicos y hospitalarios).</p>
+    </header>
+
+    <AdSlot id="soat-top" size="leaderboard-728x90" />
+
+    <div class="mt-6 grid gap-5">
+      {items.map((item, i) => (
+        <article id={item.slug} class="card">
+          <div class="flex flex-col md:flex-row gap-5 md:items-center">
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <h2 class="text-xl font-extrabold">{item.name}</h2>
+                {item.badge && <span class="badge bg-brand-50 text-brand-800 !text-xs">{item.badge}</span>}
+              </div>
+              <p class="mt-1 text-sm text-slate-600">{item.description}</p>
+              <div class="mt-3 flex items-center gap-1 text-amber-600">
+                <span class="text-lg">{'⭐'.repeat(Math.round(item.rating))}</span>
+                <span class="font-black ml-1">{item.rating}</span>
+                <span class="ml-2 text-xs text-slate-500">/ 5.0 usuarios verificados</span>
+              </div>
+              <dl class="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <dt class="font-semibold text-success-800 mb-1">Ventajas</dt>
+                  <ul class="list-disc list-inside text-slate-700 space-y-1">
+                    {item.pros.map(p => <li>{p}</li>)}
+                  </ul>
+                </div>
+                <div>
+                  <dt class="font-semibold text-danger-800 mb-1">Consideraciones</dt>
+                  <ul class="list-disc list-inside text-slate-700 space-y-1">
+                    {item.cons.map(c => <li>{c}</li>)}
+                  </ul>
+                </div>
+              </dl>
+            </div>
+            <div class="md:w-64 border-t md:border-t-0 md:border-l border-slate-100 pt-5 md:pt-0 md:pl-5 flex flex-col gap-3 items-stretch md:items-end">
+              <div class="text-center md:text-right">
+                <p class="text-xs uppercase tracking-wider text-slate-500">Precio desde</p>
+                <p class="text-3xl font-black">{item.price}</p>
+              </div>
+              <a href={item.affiliateUrl} target="_blank" rel="sponsored noopener noreferrer" class="btn-primary w-full md:w-auto text-center">
+                Cotizar gratis →
+              </a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <AdSlot id="soat-mid" size="auto-fluid" lazy />
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-black">❓ Preguntas frecuentes SOAT 2026</h2>
+      <div class="mt-5 space-y-3">
+        {faqItems.map((f, i) => (
+          <details class="card !p-0 group">
+            <summary class="cursor-pointer p-4 font-semibold list-none flex justify-between items-start gap-4">
+              <span>{f.q}</span>
+              <span class="text-brand-600 group-open:rotate-45 transition text-2xl leading-none shrink-0">+</span>
+            </summary>
+            <div class="px-4 pb-4 pt-0 text-slate-700 border-t border-slate-100">
+              <p class="pt-4">{f.a}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <p class="mt-10 text-xs text-slate-500">
+      Divulgación: Los links de cotización son enlaces afiliados <code>rel="sponsored"</code>. Los precios finales pueden variar según cilindraje, tipo de servicio (particular/público), zona y antigüedad vehículo. Condiciones actualizadas en la página oficial.
+    </p>
+
+    <AdSlot id="soat-bottom" size="auto-fluid" lazy />
+  </article>
+</BaseLayout>

@@ -1,0 +1,115 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import AdSlot from '@components/AdSlot.astro';
+import { SPECIAL_EVENTS, getActiveEvents } from '@data/special-events';
+---
+<BaseLayout
+  seo={{
+    title: 'Día sin Carro Bogotá 2026 · 5 de febrero: qué no circula y exenciones oficiales',
+    description: 'Jornada oficial Día sin Carro y sin Moto Bogotá 5 febrero 2026. Horario 05:00 a 21:00. Restricción total carros y motos. Taxis dígito restringido, eléctricos exentos y rutas SITP/TransMilenio.',
+    keywords: ['dia sin carro bogota 2026', 'que no circula dia sin carro', 'dia sin carro 5 febrero', 'exenciones dia sin carro bogota']
+  }}
+>
+  <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Día sin Carro Bogotá' }]} />
+  <article class="mx-auto max-w-4xl py-12">
+    <header class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-widest text-danger-700">⚠️ Evento especial · Bogotá D.C.</p>
+      <h1 class="mt-2 text-3xl font-black md:text-5xl">Día sin Carro y sin Moto Bogotá 2026</h1>
+      <div class="mt-4 flex flex-wrap items-center gap-3">
+        <span class="badge bg-danger-100 text-danger-800 !text-base !py-1.5 !px-3.5">📅 5 de febrero de 2026</span>
+        <span class="badge bg-amber-100 text-amber-800 !text-base !py-1.5 !px-3.5">⏰ 05:00 a 21:00 horas</span>
+        <span class="badge bg-brand-50 text-brand-800 !text-base !py-1.5 !px-3.5">🏙️ Todo el Distrito Capital + 5 km de jurisdicción</span>
+      </div>
+      <p class="mt-6 max-w-3xl text-lg text-slate-700">Jornada anual obligatoria según el Plan de Descontaminación Atmosférica (PDA) y el Acuerdo 650 de 2016. Durante 16 horas no circulan carros particulares ni motos. Conoce qué vehículos sí transitan, cuál es la multa especial y cómo moverte sin pagar comparendos.</p>
+    </header>
+
+    <AdSlot id="dsc-top" size="leaderboard-728x90" text="Anuncio Día sin Carro Bogotá" />
+
+    <section class="mt-12 grid gap-6 md:grid-cols-2">
+      <div class="card p-6 bg-danger-50 ring-1 ring-inset ring-danger-200">
+        <h2 class="text-xl font-extrabold text-danger-900">⛔ Lo que NO circula</h2>
+        <ul class="mt-4 space-y-2 text-slate-800">
+          <li>🚗 <strong>Carros particulares</strong> (incluye híbridos y vehículos con placa solidaria)</li>
+          <li>🏍️ <strong>Motos</strong> de cualquier cilindraje, híbridas y motocarros</li>
+          <li>🚚 <strong>Camionetas y camiones</strong> de carga ligera/pesada particular (excepto logística autorizada)</li>
+          <li>🚙 <strong>Vehículos ejecutivos, VANS, SUV pickups</strong> sin exención oficial</li>
+        </ul>
+        <p class="mt-4 text-sm text-danger-800 font-semibold">Multa por incumplir: 30 UVB (≈ $363.550 COP 2026) más inmovilización.</p>
+      </div>
+      <div class="card p-6 bg-success-50 ring-1 ring-inset ring-success-200">
+        <h2 class="text-xl font-extrabold text-success-900">✅ Lo que SÍ circula</h2>
+        <ul class="mt-4 space-y-2 text-slate-800">
+          <li>🚕 <strong>Taxis</strong> y vehículos de transporte público (cumplen dígito del día)</li>
+          <li>🚌 <strong>SITP, TransMilenio, Alimentadores, Cable, SITP Provisional</strong> (operación ampliada)</li>
+          <li>⚡ <strong>100% eléctricos BEV / hidrógeno</strong> (certificado RUNT categoría 0 emisiones)</li>
+          <li>🚑 <strong>Emergencias, ambulancias, policía, bomberos, fuerzas militares</strong></li>
+          <li>♿ <strong>Movilidad reducida y carros escolares</strong> con exención oficial</li>
+          <li>🧑‍🔬 <strong>Carga logística prioritaria</strong> (alimentos, medicamentos, combustible) con ventanilla horaria (00:00–06:00 y 22:00–00:00)</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="prose prose-slate mt-12 max-w-none">
+      <h2 class="text-2xl font-extrabold">Horario oficial y zonas afectadas</h2>
+      <p>La restricción aplica desde las <strong>5:00 AM hasta las 9:00 PM (hora local Colombia UTC-5)</strong>. No importa par o impar de placa: <strong>ningún carro o moto particular puede circular</strong> en cualquier vía pública de Bogotá D.C., incluyendo vías de acceso como la Autopista Norte, Autopista Sur, Avenida Boyacá, Avenida Ciudad de Cali, Avenida Eldorado y periferal de la subregión sabana centro (Soacha, Chía, Cota, Funza, Mosquera, Madrid, Bojacá, El Rosal y Tenjo dentro de corredores metropolitanos concertados).</p>
+
+      <AdSlot id="dsc-mid-1" size="auto-fluid" />
+
+      <h2 class="text-2xl font-extrabold mt-10">¿Taxis sí circulan? Entiende el dígito</h2>
+      <p>Los taxis <strong>sí operan</strong>, pero deben cumplir el mismo dígito restringido del <em>Pico y Placa General del día jueves 5 de febrero</em>. La Secretaría de Movilidad abrirá carriles exclusivos para taxis y plataformas (Rappi, Didi, Uber) en las principales avenidas. Siga estos pasos antes de subir a un taxi ese día:</p>
+      <ol>
+        <li>Verifique la placa del taxi (último dígito) en nuestro <a href="/">verificador principal</a> para evitar rechazos.</li>
+        <li>Prefiera plataformas con Pico y Placa integrado en el algoritmo de viaje; suelen informar con antelación si el vehículo está habilitado.</li>
+        <li>Evite la hora pico de 6:30–8:30 AM y 5:30–7:30 PM: la SDM habilita carriles especiales 24h pero la demanda es muy alta.</li>
+      </ol>
+
+      <h2 class="text-2xl font-extrabold mt-10">¿Qué pasa con mi vehículo eléctrico? Exención 100%</h2>
+      <p>El Acuerdo 703 de 2021 y la Ley 1964 de 2019 eximen a vehículos <strong>100% eléctricos (BEV)</strong> y de <strong>hidrógeno</strong> de cualquier restricción vehicular. ⚠️ Importante: <strong>vehículos híbridos (HEV / PHEV) NO están exentos</strong> en el Día sin Carro. Para validar su categoría eléctrica, tenga a mano:</p>
+      <ul>
+        <li>Certificado de existencia y representación legal (si es carro de empresa).</li>
+        <li>Tarjeta de propiedad electrónica RUNT: categoría "cero emisiones".</li>
+        <li>Documento de la ANDI / Cámara de Comercio colombiana cuando aplique.</li>
+      </ul>
+
+      <AdSlot id="dsc-mid-2" size="auto-fluid" lazy />
+
+      <h2 class="text-2xl font-extrabold mt-10">Alternativas de movilidad recomendadas</h2>
+      <div class="not-prose mt-4 grid gap-4 md:grid-cols-3">
+        <a class="card !p-4 hover:ring-brand-400 transition" href="#tm-sitp">
+          <p class="text-3xl">🚇</p>
+          <h3 class="mt-2 font-extrabold">TransMilenio + SITP</h3>
+          <p class="mt-1 text-xs text-slate-600">Operación ampliada 4:00 AM. Más trenes y buses alimentadores hasta 11:00 PM.</p>
+        </a>
+        <a class="card !p-4 hover:ring-brand-400 transition" href="#cicloparqueaderos">
+          <p class="text-3xl">🚲</p>
+          <h3 class="mt-2 font-extrabold">Ciclovía + BiciBogotá</h3>
+          <p class="mt-1 text-xs text-slate-600">120+ km de ciclovía temporal y 12 nuevos cicloparqueaderos en estaciones TM.</p>
+        </a>
+        <a class="card !p-4 hover:ring-brand-400 transition" href="#teletrabajo">
+          <p class="text-3xl">🏠</p>
+          <h3 class="mt-2 font-extrabold">Teletrabajo</h3>
+          <p class="mt-1 text-xs text-slate-600">La SDM recomienda jornada de teletrabajo obligatoria para empresas del sector privado (no oficial).</p>
+        </a>
+      </div>
+
+      <h2 class="text-2xl font-extrabold mt-10">Comparendos y cámaras Fotocívicas</h2>
+      <p>El Distrito activará el <strong>100% de cámaras Fotocívicas</strong>, drones de vigilancia y patrullas motorizadas. Si un agente de tránsito le detiene, el comparendo es inmediato con:</p>
+      <ul>
+        <li>Multa: ~$363.550 COP (30 UVB) antes del 50% pronto pago.</li>
+        <li>Inmovilización del vehículo con grúa oficial y depósito.</li>
+        <li>Registro en el RUNT y antecedentes de tránsito.</li>
+      </ul>
+
+      <h2 class="text-2xl font-extrabold mt-10">¿Solo hay un Día sin Carro en 2026?</h2>
+      <p>Por ahora, la Secretaría de Movilidad ha confirmado la jornada del <strong>5 de febrero</strong>. En septiembre-noviembre suele anunciarse una segunda jornada obligatoria (corresponde a la Semana Sin Carro). Suscríbase a nuestro blog para recibir alertas de nuevas fechas y cambios oficiales.</p>
+
+      <h2 class="text-2xl font-extrabold mt-10">Fuente oficial</h2>
+      <p>Consulte la circular completa de la SDM aquí: <a href="https://www.movilidadbogota.gov.co/conozca-detalles-de-lo-que-sera-la-jornada-de-dia-sin-carro-y-sin-moto-2026" target="_blank" rel="noopener noreferrer">movilidadbogota.gov.co (SDM oficial)</a>.</p>
+    </div>
+
+    <AdSlot id="dsc-bottom" size="auto-fluid" lazy />
+  </article>
+</BaseLayout>

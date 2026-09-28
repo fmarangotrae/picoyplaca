@@ -1,0 +1,102 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import AdSlot from '@components/AdSlot.astro';
+---
+<BaseLayout
+  seo={{
+    title: 'Política de Cookies y Consentimiento · picoyplaca.co',
+    description: 'Información detallada sobre las cookies y tecnologías similares utilizadas. CMP nativo con 3 categorías: Necesarias, Analítica y Marketing.',
+    noindex: true
+  }}
+>
+  <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Política de Cookies' }]} />
+  <article class="mx-auto max-w-3xl py-12">
+    <header class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-widest text-brand-700">Legal</p>
+      <h1 class="mt-2 text-3xl font-black md:text-4xl">Política de Cookies y Tecnologías Similares</h1>
+      <p class="mt-3 text-slate-600">Última actualización: 1 de septiembre de 2026 · Compatible CMP v1 nativa picoyplaca.co (sin proveedores pago).</p>
+    </header>
+    <AdSlot id="legal-ck-top" size="auto-fluid" />
+    <div class="prose prose-slate mt-8 max-w-none">
+      <h2 class="text-xl font-extrabold">1. ¿Qué son las Cookies?</h2>
+      <p>Las cookies son pequeños archivos de texto que se almacenan en su navegador cuando visita un sitio web. Permiten recordar sus preferencias, mejorar la experiencia de navegación y analizar patrones de uso. También utilizamos tecnologías similares como <em>localStorage</em>, <em>sessionStorage</em> y píxeles de seguimiento de terceros (cuando exista consentimiento).</p>
+
+      <h2 class="text-xl font-extrabold mt-8">2. Categorías y Consentimiento</h2>
+      <p>Nuestro gestor de consentimiento nativo (CMP v1) distingue <strong>3 categorías</strong>, cada una requiere o no su aceptación explícita según el artículo 22.2 de la Ley 1581 de 2012 y la recomendación AEPD 03/2020:</p>
+
+      <div class="overflow-hidden rounded-xl ring-1 ring-slate-200">
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="p-3 text-left">Categoría</th>
+              <th class="p-3 text-left">Requiere Consentimiento</th>
+              <th class="p-3 text-left">Finalidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t border-slate-100">
+              <td class="p-3 font-semibold text-success-700">🍪 Necesarias</td>
+              <td class="p-3">No · Siempre activas</td>
+              <td class="p-3">Autenticar decisiones de CMP, sesión de formularios Turnstile, modo oscuro/claro, CSRF tokens, Cloudflare Bot Management.</td>
+            </tr>
+            <tr class="border-t border-slate-100">
+              <td class="p-3 font-semibold text-amber-700">📊 Analítica</td>
+              <td class="p-3">Sí · Opt-in</td>
+              <td class="p-3">Google Analytics 4 (anónimo IP) para medir audiencias, duración y rutas de navegación sin publicidad asociada.</td>
+            </tr>
+            <tr class="border-t border-slate-100">
+              <td class="p-3 font-semibold text-brand-700">💸 Marketing</td>
+              <td class="p-3">Sí · Opt-in</td>
+              <td class="p-3">Google AdSense, Ezoic (por umbral) y banners patrocinados para personalizar anuncios relevantes en este y otros sitios.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="text-xl font-extrabold mt-8">3. Cookies Propias (First-Party)</h2>
+      <ul>
+        <li><code>ppc-cmp-v1</code> (1 año · Necesaria): Almacena su decisión de categorías aceptadas en localStorage.</li>
+        <li><code>ppc-theme</code> (1 año · Necesaria): Preferencia de tema claro/oscuro.</li>
+        <li><code>ppc-turnstile</code> (sesión · Necesaria): Token anti-spam Turnstile Cloudflare en formularios.</li>
+      </ul>
+
+      <h2 class="text-xl font-extrabold mt-8">4. Cookies de Terceros (solo si consiente)</h2>
+      <h3 class="text-lg font-bold">Analítica</h3>
+      <ul>
+        <li><code>_ga</code>, <code>_ga_XXXXXX</code> (2 años · GA4): Identificación anónima de sesión. Google LLC. Uso Analytics solo después del opt-in.</li>
+      </ul>
+      <h3 class="text-lg font-bold">Publicidad</h3>
+      <ul>
+        <li><code>__gads</code>, <code>__gpi</code>, <code>id</code>, <code>FCNEC</code> (AdSense): Cookies de personalización publicitaria Google / DoubleClick. Solo después de opt-in Marketing.</li>
+        <li><code>ez*</code> (Ezoic): Cuando se alcance umbral 10.000 sesiones/mes y se active el panel. Cookies de monetización y pruebas de layout.</li>
+      </ul>
+
+      <h2 class="text-xl font-extrabold mt-8">5. Carga Condicional de Scripts</h2>
+      <p>💡 Importante: Los scripts de Google Analytics 4 y Google AdSense <strong>NO se cargan en la primera visita</strong>. Solo se inyectan dinámicamente en el <code>document.head</code> si acepta las categorías correspondientes. Si rechaza, su navegador no descarga ni envía ninguna petición a dominios publicitarios. Esto se audita desde el servidor y el panel privacidad del navegador.</p>
+
+      <h2 class="text-xl font-extrabold mt-8">6. Cómo Revocar o Configurar</h2>
+      <ol>
+        <li>En cualquier momento, haga clic en el enlace <strong>"⚙️ Configurar cookies"</strong> del pie de página para reabrir el panel CMP.</li>
+        <li>Desde su navegador: Chrome (<code>chrome://settings/cookies</code>), Firefox (<code>about:preferences#privacy</code>), Safari, Edge y Opera permiten bloquear, eliminar o permitir cookies por dominio.</li>
+        <li>Para exclusión global Google Ads Personalization: <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">https://adssettings.google.com</a>.</li>
+        <li>Para exclusión global GA: extensión oficial <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">Google Analytics Opt-out Browser Add-on</a>.</li>
+      </ol>
+
+      <h2 class="text-xl font-extrabold mt-8">7. Cookies de Afiliación y Patrocinio</h2>
+      <p>Los enlaces a comparativas (seguros vehiculares, SOAT 2026, renting) pueden incluir <code>UTM_*</code> y parámetros de tracking estándar. No son cookies persistentes; son query params de atribución usados únicamente por las plataformas de destino para reconocer el origen de la visita.</p>
+
+      <h2 class="text-xl font-extrabold mt-8">8. Menores de 14 Años</h2>
+      <p>Si tiene menos de 14 años, por favor NO consienta categorías Analítica o Marketing. El Servicio no personaliza publicidad dirigida a menores.</p>
+
+      <h2 class="text-xl font-extrabold mt-8">9. Transferencias Internacionales</h2>
+      <p>Al aceptar categorías Analítica/Marketing, usted autoriza transferencia internacional de datos hacia Estados Unidos y países donde operen Google LLC y Cloudflare Inc. (acuerdos Privacy Shield y SCCs 2021).</p>
+
+      <h2 class="text-xl font-extrabold mt-8">10. Dudas</h2>
+      <p>Escríbanos a <code>privacidad@picoyplaca.co</code> con asunto "Política Cookies". Responderemos en máximo 10 días hábiles.</p>
+    </div>
+    <AdSlot id="legal-ck-bottom" size="auto-fluid" lazy />
+  </article>
+</BaseLayout>

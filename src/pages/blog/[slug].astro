@@ -1,0 +1,142 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import AdSlot from '@components/AdSlot.astro';
+import { BLOG_POSTS_SEED } from '@data/content-seed';
+
+export async function getStaticPaths() {
+  return BLOG_POSTS_SEED.map(post => ({
+    params: { slug: post.slug },
+    props: { post }
+  }));
+}
+
+const { slug } = Astro.params;
+const { post } = Astro.props as any;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.description,
+  author: { '@type': 'Organization', name: post.author },
+  publisher: { '@type': 'Organization', name: 'picoyplaca.co', logo: { '@type': 'ImageObject', url: 'https://picoyplaca.co/favicon.svg' } },
+  datePublished: post.publishedAt,
+  dateModified: post.modifiedAt || post.publishedAt,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': `https://picoyplaca.co/blog/${post.slug}` },
+  keywords: post.tags.join(', '),
+  image: `https://picoyplaca.co${post.cover || '/og-default.png'}`
+};
+
+// Contenido placeholder ampliado según categoría/tags
+const CONTENT_TIPS: Record<string, string[]> = {
+  Guías: [
+    '## Paso a paso para no olvidar tu dígito',
+    'Guarda este post en marcadores y actívalo offline en tu celular para consultar sin internet.',
+    '## Recomendaciones rápidas',
+    'Mantén siempre cerca tu documento de identidad, tarjeta de propiedad y SOAT vigente para cualquier control.'
+  ],
+  Normativas: [
+    '## Fundamentos legales',
+    'Estas disposiciones se basan en el Código Nacional de Tránsito, el Artículo 136 y los Acuerdos Distritales / Decretos municipales correspondientes.',
+    '## ¿Dónde consultar el texto oficial?',
+    'Enlaces a la Secretaría de Movilidad de cada ciudad se encuentran al final de este artículo.'
+  ],
+  Actualizaciones: [
+    '## ¿Cómo me entero de los próximos cambios?',
+    'Suscríbete a las notificaciones de picoyplaca.co o sigue las redes oficiales de tu Secretaría de Movilidad.',
+    '## Cronograma esperado',
+    'La actualización de rotaciones usualmente se publica 15 días antes del inicio del periodo.'
+  ],
+  default: [
+    '## Resumen clave para este artículo',
+    'No te fíes únicamente de rumores en grupos de WhatsApp. Las fuentes oficiales son la única referencia válida.',
+    '## Pasos siguientes',
+    'Vuelve a la página de inicio y usa el verificador para confirmar tu restricción hoy.'
+  ]
+};
+const tipsForCategory = CONTENT_TIPS[post.category] || CONTENT_TIPS['default'];
+---
+<BaseLayout seo={{
+  title: `${post.title} · Blog picoyplaca.co`,
+  description: post.description,
+  keywords: post.tags
+}}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <Breadcrumb items={[
+    { label: 'Inicio', href: '/' },
+    { label: 'Blog', href: '/blog' },
+    { label: post.title }
+  ]} />
+  <article class="mx-auto max-w-3xl py-12 px-6">
+    <header>
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="badge bg-brand-50 text-brand-800 !text-xs">{post.category}</span>
+        <span class="text-xs text-slate-500">📅 Publicado: {post.publishedAt}</span>
+        {post.modifiedAt && <span class="text-xs text-slate-500">🔄 Actualizado: {post.modifiedAt}</span>}
+        <span class="text-xs text-slate-500">✍️ {post.author}</span>
+      </div>
+      <h1 class="mt-4 text-3xl font-black md:text-5xl leading-tight">{post.title}</h1>
+      <p class="mt-4 text-lg text-slate-700">{post.description}</p>
+      <div class="mt-4 flex flex-wrap gap-1.5">
+        {post.tags.map((t: string) => (
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">#{t}</span>
+        ))}
+      </div>
+    </header>
+
+    <AdSlot id="blog-post-top" size="auto-fluid" />
+
+    <div class="mt-10 aspect-video w-full rounded-2xl bg-gradient-to-br from-brand-100 via-brand-50 to-slate-100 ring-1 ring-slate-200 flex items-center justify-center text-7xl">
+      📖
+    </div>
+
+    <section class="prose prose-slate mt-10 max-w-none">
+      <p>Este artículo está redactado y mantenido por el equipo editorial de picoyplaca.co, revisando continuamente fuentes oficiales del Ministerio de Transporte, Secretarías de Movilidad locales (Bogotá SDM, AMVA Medellín, Cali SMC, Barranquilla, AMB Bucaramanga y Cartagena), Superintendencias y diarios de circulación nacional para garantizar la mayor precisión.</p>
+
+      <h2>Introducción</h2>
+      <p>{post.description}</p>
+
+      {tipsForCategory.map((tip, i) => tip.startsWith('## ') ? (
+        <h2>{tip.replace(/^##\s*/, '')}</h2>
+      ) : (
+        <p>{tip}</p>
+      ))}
+
+      <h2>Fuentes oficiales consultadas</h2>
+      <ul>
+        <li>Mintransporte · <a href="https://www.mintransporte.gov.co" target="_blank" rel="noopener noreferrer">mintransporte.gov.co</a></li>
+        <li>SDM Bogotá · Secretaría Distrital de Movilidad</li>
+        <li>AMVA · Área Metropolitana del Valle de Aburrá (Medellín)</li>
+        <li>Fasecolda · comparativa tarifas SOAT y UVB</li>
+        <li>Secretarías de Movilidad Cali, Barranquilla, Bucaramanga y Cartagena</li>
+      </ul>
+
+      <div class="rounded-xl bg-amber-50 p-5 ring-1 ring-amber-200 text-amber-900">
+        <p class="font-bold">⚠️ Aviso editorial</p>
+        <p class="mt-2 text-sm">Este blog proporciona información general y educativa. No reemplaza el asesoramiento jurídico o profesional especializado en tránsito y transporte. Verifica siempre con las autoridades locales.</p>
+      </div>
+    </section>
+
+    <AdSlot id="blog-post-middle" size="auto-fluid" lazy />
+
+    <section class="mt-12 card p-6">
+      <h2 class="text-lg font-extrabold">📌 Sigue leyendo</h2>
+      <ul class="mt-3 space-y-2 text-sm">
+        {BLOG_POSTS_SEED
+          .filter(p => p.slug !== post.slug)
+          .slice(0, 4)
+          .map(p => (
+            <li class="flex justify-between items-center gap-3">
+              <a class="text-slate-800 hover:text-brand-700 underline-offset-4 hover:underline" href={`/blog/${p.slug}`}>{p.title}</a>
+              <span class="text-xs text-slate-500 shrink-0">{p.publishedAt}</span>
+            </li>
+          ))}
+      </ul>
+    </section>
+
+    <AdSlot id="blog-post-bottom" size="auto-fluid" lazy />
+  </article>
+</BaseLayout>

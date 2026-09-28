@@ -1,0 +1,31 @@
+---
+export interface Props {
+  digits?: number[];
+  restricted?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const { digits = [], restricted = true, size = 'md' } = Astro.props;
+const sizes = {
+  sm: 'h-7 w-7 text-sm',
+  md: 'h-10 w-10 text-lg',
+  lg: 'h-14 w-14 text-2xl'
+};
+const base =
+  restricted
+    ? 'bg-danger-50 text-danger-700 ring-1 ring-inset ring-danger-500/20'
+    : 'bg-success-50 text-success-700 ring-1 ring-inset ring-success-500/20';
+---
+{digits.length === 0 ? (
+  <span class="badge bg-slate-100 text-slate-600">Sin restricción por dígito</span>
+) : (
+  <div class="flex flex-wrap gap-2">
+    {digits.map(d => (
+      <span
+        class={`inline-flex items-center justify-center rounded-full font-bold tabular-nums ${sizes[size]} ${base}`}
+      >
+        {d}
+      </span>
+    ))}
+  </div>
+)}

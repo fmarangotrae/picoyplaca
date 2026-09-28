@@ -1,0 +1,58 @@
+---
+export interface Props {
+  text?: string;
+  size?: AdSlotSize;
+  id?: string;
+  sticky?: boolean;
+}
+
+import type { AdSlotSize } from '../types';
+
+const {
+  text = 'Anuncio · tu AdSense aquí',
+  size = 'leaderboard-728x90',
+  id = 'ad-placeholder',
+  sticky = false
+} = Astro.props;
+
+const DIMENSIONS: Record<Exclude<AdSlotSize, 'auto-fluid'>, { w: string; h: string; mobile?: { w: string; h: string } }> = {
+  'leaderboard-728x90': { w: '728px', h: '90px' },
+  'medium-rectangle-300x250': { w: '300px', h: '250px' },
+  'large-rectangle-336x280': { w: '336px', h: '280px' },
+  'half-page-300x600': { w: '300px', h: '600px' },
+  'mobile-leaderboard-320x50': { w: '320px', h: '50px' }
+};
+
+const dims = size === 'auto-fluid' ? null : DIMENSIONS[size as Exclude<AdSlotSize, 'auto-fluid'>];
+
+const stickyClass = sticky
+  ? 'md:sticky md:top-24 z-20'
+  : '';
+---
+<aside
+  id={id}
+  data-ad-slot={id}
+  data-ad-size={size}
+  role="complementary"
+  aria-label="Espacio publicitario"
+  class={`w-full max-w-full overflow-hidden rounded-xl border border-dashed border-slate-300 bg-slate-100 text-xs text-slate-500 flex items-center justify-center my-6 ${stickyClass}`}
+  style={
+    dims
+      ? `min-height:${dims.h};aspect-ratio:${dims.w.replace('px', '')} / ${dims.h.replace('px', '')};`
+      : 'min-height:90px;'
+  }
+>
+  <div class="flex flex-col items-center gap-1 p-3 text-center">
+    <span class="font-semibold uppercase tracking-wider">Publicidad</span>
+    <p>{text}</p>
+    <p class="text-[10px] opacity-70">Slot ID: {id} · size={size}</p>
+  </div>
+  <ins
+    class="adsbygoogle hidden"
+    style="display:block"
+    data-ad-client={import.meta.env.GOOGLE_ADSENSE_CLIENT_ID}
+    data-ad-slot="0000000000"
+    data-ad-format="auto"
+    data-full-width-responsive="true"
+  ></ins>
+</aside>

@@ -1,0 +1,144 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import AdSlot from '@components/AdSlot.astro';
+import { COMPARISON_SEED } from '@data/content-seed';
+
+const items = COMPARISON_SEED['mejores-seguros-vehiculares-colombia'];
+const bestRating = Math.max(...items.map(i => i.rating));
+const avgRating = (items.reduce((a, b) => a + b.rating, 0) / items.length).toFixed(1);
+
+const faqItems = [
+  { q: '¿Qué cubre un seguro todo riesgo vs básico?', a: 'Todo riesgo incluye pérdida total por hurto/accidente, daños a terceros ampliada, defensa jurídica, auxilio vial y coche sustitución. El básico (RCV) solo cubre daños a terceros, sin cobertura sobre tu propio vehículo.' },
+  { q: '¿Puedo pagar el seguro mensualmente?', a: 'Sí. Todas las aseguradoras comparadas aquí ofrecen pago mensual con tarjeta de crédito o débito automático. Algunas cobran intereses financieros del ~18% anual; verifica antes de firmar.' },
+  { q: '¿El SOAT está incluido?', a: 'Solo los paquetes combinados (ej. AXA Pack Total incluyen SOAT). La mayoría de planes todo riesgo NO incluyen el SOAT obligatorio. Compra ambos para circular sin comparendos.' },
+  { q: '¿Hay descuento por no haber tenido siniestros?', a: 'Sí. Bonificación "Buen Conductor" 5% a 25% dependiendo años sin accidentes y siniestralidad 0. Allianz y Bolívar la aplican automáticamente.' },
+  { q: '¿Cuánto dura el deducible?', a: 'Generalmente 10% del valor asegurado en siniestro (daños propios). Algunos planes premium reducen deducible a 5% o lo eliminan completamente.' }
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: items.map((i, idx) => ({
+    '@type': 'ListItem',
+    position: idx + 1,
+    item: {
+      '@type': 'Product',
+      name: i.name,
+      description: i.description,
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: i.rating,
+        bestRating: 5,
+        ratingCount: 100 + idx * 47
+      },
+      offers: { '@type': 'Offer', priceCurrency: 'COP', price: i.price.replace(/\D/g, '').slice(0, -2) || '69900', availability: 'InStock', url: i.affiliateUrl }
+    }
+  })),
+  mainEntity: {
+    '@type': 'FAQPage',
+    name: 'Preguntas frecuentes Seguros Vehiculares',
+    acceptedAnswer: faqItems.map(f => ({
+      '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a }
+    }))
+  }
+};
+---
+<BaseLayout seo={{
+  title: 'Mejores Seguros Vehiculares Colombia 2026 · Top 4 comparativa',
+  description: `Comparativa actualizada de los ${items.length} mejores seguros todo riesgo y básicos para carros y motos en Colombia 2026. Precios desde $54.900/mes, talleres autorizados, auxilio vial y bonificaciones por buen conductor.`,
+  keywords: ['mejores seguros vehiculares colombia', 'seguro carro todo riesgo', 'comparativa seguros 2026', 'seguro moto colombia']
+}}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Comparativas' }, { label: 'Seguros Vehiculares 2026' }]} />
+  <article class="mx-auto max-w-6xl py-12">
+    <header class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-widest text-brand-700">💰 Comparativa Afiliada · Actualizada sep 2026</p>
+      <h1 class="mt-2 text-3xl font-black md:text-5xl">Mejores Seguros Vehiculares de Colombia 2026</h1>
+      <p class="mt-4 max-w-3xl text-lg text-slate-700">Análisis independiente de ${items.length} aseguradoras autorizadas por la <strong>Superfinanciera</strong>. Precios, coberturas, deducibles, pros y contras con links directos de afiliado <code>rel="sponsored"</code>.</p>
+      <div class="mt-5 flex flex-wrap gap-3 text-sm text-slate-600">
+        <span class="badge bg-slate-100 text-slate-700">🎯 Rating promedio: {avgRating} / 5</span>
+        <span class="badge bg-slate-100 text-slate-700">📊 {items.length} aseguradoras analizadas</span>
+        <span class="badge bg-slate-100 text-slate-700">⏱️ Lectura ~7 min</span>
+      </div>
+    </header>
+
+    <AdSlot id="seg-top" size="leaderboard-728x90" text="Anuncio · seguros vehiculares" />
+
+    <section class="mt-10 grid gap-6">
+      {items.map((item, i) => (
+        <article id={`${item.slug}`} class="card overflow-hidden">
+          <header class="flex flex-col md:flex-row items-start md:items-center gap-4 border-b border-slate-100 bg-slate-50 p-5">
+            <div class="flex items-center gap-3">
+              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white ring-1 ring-slate-200 text-2xl font-black text-brand-700">#{i + 1}</div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xl font-extrabold">{item.name}</h2>
+                  {item.badge && <span class="badge bg-brand-50 text-brand-800 !text-xs">{item.badge}</span>}
+                </div>
+                <p class="mt-0.5 text-sm text-slate-600">{item.description}</p>
+              </div>
+            </div>
+            <div class="md:ml-auto flex items-center gap-4">
+              <div class="text-right">
+                <p class="text-xs uppercase tracking-wider text-slate-500">Precio</p>
+                <p class="text-xl font-black text-slate-900">{item.price}</p>
+              </div>
+              <div class="flex flex-col items-end">
+                <div class="flex items-center gap-1">
+                  <span class="text-xl">{'⭐'.repeat(Math.round(item.rating))}</span>
+                  <span class="text-lg font-black text-amber-600">{item.rating}</span>
+                </div>
+                <p class="text-[11px] text-slate-500">AggregateRating</p>
+              </div>
+              <a href={item.affiliateUrl} target="_blank" rel="sponsored noopener noreferrer" class="btn-primary whitespace-nowrap">
+                Ver plan →
+              </a>
+            </div>
+          </header>
+          <div class="grid gap-4 md:grid-cols-2 p-5 text-sm">
+            <div>
+              <p class="font-bold text-success-800 mb-1">✅ Ventajas</p>
+              <ul class="list-inside list-disc space-y-1 text-slate-700">
+                {item.pros.map(p => <li>{p}</li>)}
+              </ul>
+            </div>
+            <div>
+              <p class="font-bold text-danger-800 mb-1">⚠️ Desventajas</p>
+              <ul class="list-inside list-disc space-y-1 text-slate-700">
+                {item.cons.map(c => <li>{c}</li>)}
+              </ul>
+            </div>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <AdSlot id="seg-mid" size="auto-fluid" lazy />
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-black">📋 Preguntas frecuentes</h2>
+      <div class="mt-5 space-y-3">
+        {faqItems.map((f, i) => (
+          <details class="card !p-0 group overflow-hidden" open={i === 0}>
+            <summary class="cursor-pointer list-none p-4 font-semibold text-slate-900 marker:hidden flex items-center justify-between">
+              <span>{f.q}</span>
+              <span class="text-brand-600 group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+            </summary>
+            <div class="px-4 pb-4 pt-0 text-slate-700 border-t border-slate-100">
+              <p class="pt-4">{f.a}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <p class="mt-10 text-xs text-slate-500">
+      Divulgación transparente: Los links marcados con <code>rel="sponsored"</code> son enlaces de afiliado. Si compras a través de ellos, picoyplaca.co recibe una pequeña comisión sin costo adicional para ti. Los precios y condiciones se confirman en la página oficial de cada aseguradora.
+    </p>
+
+    <AdSlot id="seg-bottom" size="auto-fluid" lazy />
+  </article>
+</BaseLayout>

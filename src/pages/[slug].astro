@@ -1,0 +1,173 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import CityDailyPanel from '@components/CityDailyPanel.astro';
+import PlateCheckerIsland from '@components/islands/PlateCheckerIsland.tsx';
+import AdSlot from '@components/AdSlot.astro';
+import DigitsRow from '@components/DigitsRow.astro';
+import VehicleBadge from '@components/VehicleBadge.astro';
+
+import { CITIES } from '@data/cities';
+import { formatDateISO, getDailyRestriction, parseDate } from '@lib/pico';
+import { FINE_CONFIG, DAY_RECOMMENDATIONS } from '@data/fines';
+
+export async function getStaticPaths() {
+  const WEEKDAY_NAMES = [
+    'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'
+  ];
+  const MONTH_NAMES = [
+    'enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'
+  ];
+  const today = formatDateISO(new Date());
+  return CITIES.map(city => {
+    const restriction = getDailyRestriction(city, today);
+    const d = parseDate(today);
+    const dateLabel = `${WEEKDAY_NAMES[d.getDay()]} ${d.getDate()} de ${MONTH_NAMES[d.getMonth()]} de ${d.getFullYear()}`;
+    return {
+      params: { slug: city.slug },
+      props: { city, restriction, today, dateLabel }
+    };
+  });
+}
+
+const { slug } = Astro.params;
+const { city, restriction, today, dateLabel } = Astro.props as any;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'City',
+  name: city.name,
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'CO',
+    addressRegion: city.department
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: city.lat,
+    longitude: city.lng
+  }
+};
+
+const scheduleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Schedule',
+  name: `Pico y placa en ${city.name} - ${dateLabel}`,
+  startDate: today,
+  endDate: today,
+  repeatFrequency: 'Weekly'
+};
+---
+<BaseLayout
+  seo={{
+    title: `Pico y Placa en ${city.name} HOY ${dateLabel} · 2026`,
+    description: `Consulta el pico y placa de HOY y todo el año ${new Date().getFullYear()} en ${city.name} (${city.department}). Dígitos restringidos, horarios, multa 52,29 UVB, exenciones y rotación semestral oficial.`,
+    keywords: [
+      `pico y placa ${city.name.toLowerCase().replace(/\s+/g, '-')}`,
+      `pico y placa hoy ${city.slug}`,
+      `digitos pico y placa ${city.slug} 2026`
+    ],
+    jsonLd: [jsonLd, scheduleJsonLd]
+  }}
+>
+  <Breadcrumb
+    items={[
+      { label: 'Inicio', href: '/' },
+      { label: 'Ciudades', href: '/ciudades' },
+      { label: city.name }
+    ]}
+  />
+
+  <header class="mb-8">
+    <p class="text-xs font-semibold uppercase tracking-widest text-brand-700">
+      📍 {city.region} · {city.department}
+    </p>
+    <h1 class="mt-2 text-3xl font-black tracking-tight md:text-4xl">
+      Pico y placa en {city.name} · HOY {dateLabel}
+    </h1>
+    <p class="mt-3 max-w-3xl text-slate-600">
+      Restricciones oficiales por tipo de vehículo, horarios y dígitos restringidos.
+      Consulta el verificador de placa con cálculo en tiempo real y luego revisa el
+      calendario anual, taxis y motos en sus páginas dedicadas SEO.
+    </p>
+  </header>
+
+  <AdSlot id={`city-${city.slug}-top`} size="leaderboard-728x90" text={`Publicidad ${city.name} cabecera`} />
+
+  <div class="mb-8 grid gap-6 lg:grid-cols-[2fr,1fr]">
+    <div>
+      <PlateCheckerIsland client:visible />
+      <div class="mt-4">
+        <CityDailyPanel city={city} restriction={restriction} dateLabel={dateLabel} />
+      </div>
+    </div>
+    <aside class="space-y-5">
+      <div class="card p-5">
+        <h2 class="text-lg font-extrabold">Multa · {new Date().getFullYear()}</h2>
+        <p class="mt-2 text-sm text-slate-700">
+          <strong class="text-lg text-danger-700">{FINE_CONFIG.uvb2026} UVB · ≈ ${FINE_CONFIG.amountCops2026.toLocaleString('es-CO')} COP</strong>
+        </p>
+        <ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-700">
+          {FINE_CONFIG.notes.map(n => <li>{n}</li>)}
+        </ul>
+        <a href="/multa-pico-placa-2026" class="mt-4 inline-block text-sm font-semibold text-brand-700">
+          Ver guía completa para recurrir multa →
+        </a>
+      </div>
+      <div class="card p-5">
+        <h2 class="text-lg font-extrabold">📌 Navegación rápida</h2>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href={`/calendario-pico-y-placa-${city.slug}-2025`}>📅 Calendario pico y placa {city.name} 2025</a></li>
+          <li><a href={`/calendario-pico-y-placa-${city.slug}-2026`}>📅 Calendario pico y placa {city.name} 2026</a></li>
+          <li><a href={`/calendario-pico-y-placa-${city.slug}-2027`}>📅 Calendario pico y placa {city.name} 2027</a></li>
+          <li><a href={`/pico-y-placa/${city.slug}/taxis`}>🚕 Rotación especial Taxis {city.name}</a></li>
+          <li><a href={`/pico-y-placa/${city.slug}/motos`}>🏍️ Restricción Motos {city.name}</a></li>
+          {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
+            const mm = String(m).padStart(2, '0');
+            const y = new Date().getFullYear();
+            return <li>
+              <a href={`/pico-y-placa/${city.slug}/${mm}/${y}`}>
+                📆 {new Date(y, m-1, 1).toLocaleString('es-CO', { month: 'long' })} {y}
+              </a>
+            </li>;
+          })}
+        </ul>
+      </div>
+      <AdSlot id={`city-${city.slug}-sidebar`} size="medium-rectangle-300x250" sticky text="Anuncio sidebar ciudad" />
+    </aside>
+  </div>
+
+  <section class="mt-10 grid gap-4 md:grid-cols-4">
+    {(['carro','moto','taxi','electricos'] as const).map(k => (
+      <article class="card p-4">
+        <VehicleBadge kind={k} />
+        <h3 class="mt-3 text-sm font-semibold text-slate-800">
+          {restriction.perVehicle[k].canCirculateFullDay ? '✅ Libre' : '⛔ Restringido'}
+        </h3>
+        <DigitsRow class="mt-3" size="sm" digits={restriction.perVehicle[k].restrictedDigits ?? []} restricted={!restriction.perVehicle[k].canCirculateFullDay} />
+      </article>
+    ))}
+  </section>
+
+  <section class="mt-10 grid gap-4 md:grid-cols-2">
+    <div class="card p-5">
+      <h2 class="text-lg font-extrabold">💡 Consejos HOY para {city.name}</h2>
+      <ul class="mt-3 list-inside list-disc space-y-2 text-sm text-slate-700">
+        {DAY_RECOMMENDATIONS.restricted.slice(0, 3).map(l => <li>{l}</li>)}
+      </ul>
+    </div>
+    <div class="card p-5">
+      <h2 class="text-lg font-extrabold">📚 Fuentes oficiales verificadas</h2>
+      <ul class="mt-3 space-y-2 text-sm">
+        {city.sourceUrls.map((s: string) => (
+          <li><a href={s} target="_blank" rel="noopener noreferrer">{s}</a></li>
+        ))}
+      </ul>
+      <p class="mt-4 text-xs text-slate-500">Última sincronización de datos: {city.lastUpdated}</p>
+    </div>
+  </section>
+
+  <AdSlot id={`city-${city.slug}-footer`} size="auto-fluid" lazy />
+</BaseLayout>

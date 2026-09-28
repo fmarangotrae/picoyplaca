@@ -1,0 +1,151 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import AdSlot from '@components/AdSlot.astro';
+import { CITIES } from '@data/cities';
+---
+<BaseLayout seo={{
+  title: 'Pico y Placa PRO · API y Dashboards para Empresas, Gobiernos y flotas',
+  description: 'Plan profesional picoyplaca.co: API JSON, webhooks, dashboard administración para gestión de flotas, gobiernos locales y taxis. Turnstile anti-spam y seguridad Cloudflare Zero Trust.',
+  keywords: ['pico y placa pro', 'api pico y placa colombia', 'dashboard flota empresa', 'gobierno local']
+}}>
+  <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Plan PRO B2B' }]} />
+  <article>
+    <section class="bg-gradient-to-br from-brand-50 via-white to-white border-b border-slate-100">
+      <div class="mx-auto max-w-6xl py-16 px-6 text-center">
+        <p class="inline-flex badge bg-brand-100 text-brand-800 !text-sm !py-1.5 !px-4 ring-1 ring-brand-200">💼 Plan Profesional · B2B</p>
+        <h1 class="mt-6 text-4xl font-black md:text-6xl max-w-4xl mx-auto">Pico y Placa PRO: API y Dashboards para <span class="text-brand-700">Empresas y Gobiernos</span></h1>
+        <p class="mt-6 max-w-3xl mx-auto text-lg text-slate-700">Integra el calendario oficial de restricciones de 6+ ciudades colombianas en tu ERP, app de flota, logística o sistema de gobierno local. Sin mantenimiento de rotaciones, sin desarrollo propio: <strong>solo consumir nuestra API JSON</strong>.</p>
+        <div class="mt-8 flex flex-wrap gap-3 items-center justify-center">
+          <a href="#contacto" class="btn-primary !text-base !px-6 !py-3">📩 Solicitar demo 14 días gratis</a>
+          <a href="#precios" class="btn-secondary !text-base !px-6 !py-3">Ver planes y precios</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="caracteristicas" class="mx-auto max-w-6xl py-16 px-6">
+      <h2 class="text-2xl font-black md:text-3xl text-center">Todo lo que incluye PRO</h2>
+      <p class="mt-2 text-center text-slate-600 max-w-2xl mx-auto">Características pensadas para operar a escala en ciudades con restricción vehicular.</p>
+      <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {[
+          { ic: '🔌', t: 'API REST JSON oficial', d: 'Endpoints /api/v1/restriction/{ciudad}/{fecha} y /check-plate. Límites 200 a 10.000 req/minuto según plan. Respuestas <50ms vía Cloudflare Workers.' },
+          { ic: '📅', t: '6+ ciudades incluídas', d: 'Bogotá (par/impar), Medellín (AMVA, 1S/2S shiftOffset), Cali, Barranquilla, Bucaramanga, Cartagena. Agregamos ciudades nuevas sin costo extra.' },
+          { ic: '🔔', t: 'Alertas y Webhooks', d: 'Programa webhooks cuando cambian rotaciones o hay eventos especiales (Día sin Carro, jornada pedagógica, festivos).' },
+          { ic: '📊', t: 'Dashboard administración', d: 'Panel web para verificar flotas, exportar reportes CSV, ver historial de restricciones y multas esperadas por placa.' },
+          { ic: '🧑‍💼', t: 'Soporte dedicado', d: 'WhatsApp + correo con SLA 99,9% mensual. Plan Enterprise incluye ingeniero de cuenta.' },
+          { ic: '🔐', t: 'Zero Trust / SSO', d: 'Acceso al panel administrativo solo tras Cloudflare Access Zero Trust (Google SSO, emails permitidos).' }
+        ].map(f => (
+          <div class="card p-6">
+            <p class="text-3xl">{f.ic}</p>
+            <h3 class="mt-3 text-lg font-extrabold">{f.t}</h3>
+            <p class="mt-2 text-sm text-slate-700">{f.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <AdSlot id="pro-mid-1" size="auto-fluid" />
+
+    <section id="precios" class="mx-auto max-w-6xl py-16 px-6 border-t border-slate-100">
+      <h2 class="text-2xl font-black md:text-3xl text-center">Planes y precios Pro</h2>
+      <p class="mt-2 text-center text-slate-600 max-w-2xl mx-auto">Precio USD facturado por Stripe. Sin permanencia en Plan Starter y Escala; 12 meses en Enterprise.</p>
+      <div class="mt-10 grid gap-5 md:grid-cols-3 items-stretch">
+        {[
+          { n: 'Starter', p: 'US$ 29 / mes', pop: false, fts: ['Hasta 5.000 requests/mes', '1 ciudad (elige una)', 'API Key JWT', 'Soporte email 48h'], cta: 'Seleccionar Starter' },
+          { n: 'Scale', p: 'US$ 149 / mes', pop: true, fts: ['Hasta 200.000 requests/mes', `${CITIES.length} ciudades incluidas`, '5 Webhooks activos', 'Dashboard analítica flotas', 'Turnstile anti-abuso', 'Soporte 12h hábiles'], cta: 'Seleccionar Scale' },
+          { n: 'Enterprise', p: 'A medida', pop: false, fts: ['Requests ilimitados', 'Ciudades a medida', 'SLA 99,9% + penalización', 'Ingeniero de cuenta', 'Onboarding dedicado', 'SSO / Zero Trust 5+ emails'], cta: 'Hablar con ventas' }
+        ].map(plan => (
+          <div class={`card p-6 flex flex-col ${plan.pop ? 'ring-2 ring-brand-500 shadow-lg' : ''} relative`}>
+            {plan.pop && <p class="absolute -top-3 left-1/2 -translate-x-1/2 badge bg-brand-600 text-white !text-xs">⭐ Más popular</p>}
+            <div class="flex-1 flex flex-col">
+              <h3 class="text-xl font-extrabold">{plan.n}</h3>
+              <p class="mt-3 text-3xl font-black text-slate-900">{plan.p}</p>
+              <ul class="mt-5 space-y-2 text-sm text-slate-700">
+                {plan.fts.map(ft => <li class="flex gap-2"><span class="text-success-600">✅</span> {ft}</li>)}
+              </ul>
+            </div>
+            <a href="#contacto" class={`mt-6 w-full text-center ${plan.pop ? 'btn-primary' : 'btn-secondary'}`}>{plan.cta}</a>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <AdSlot id="pro-mid-2" size="auto-fluid" lazy />
+
+    <section id="contacto" class="mx-auto max-w-4xl py-16 px-6 border-t border-slate-100">
+      <h2 class="text-2xl font-black md:text-3xl text-center">Solicita tu demo de 14 días gratis</h2>
+      <p class="mt-2 text-center text-slate-600">Completa tus datos y nuestro equipo te contacta en menos de 24 horas hábiles. Sin tarjeta de crédito para probar.</p>
+
+      <form method="post" action="/api/leads" class="mt-8 card p-6 md:p-8 grid gap-4 md:grid-cols-2" id="pro-form">
+        <div class="md:col-span-2">
+          <label class="label" for="company">Empresa / Organización</label>
+          <input id="company" name="company" required type="text" class="input" placeholder="Nombre de tu compañía o entidad pública" />
+        </div>
+        <div>
+          <label class="label" for="name">Nombre responsable</label>
+          <input id="name" name="name" required type="text" class="input" placeholder="Tu nombre completo" />
+        </div>
+        <div>
+          <label class="label" for="email">Correo corporativo</label>
+          <input id="email" name="email" required type="email" class="input" placeholder="tu@empresa.com.co" />
+        </div>
+        <div>
+          <label class="label" for="phone">Teléfono / WhatsApp</label>
+          <input id="phone" name="phone" type="tel" class="input" placeholder="+57 300 000 0000" />
+        </div>
+        <div>
+          <label class="label" for="plan">Plan de interés</label>
+          <select id="plan" name="plan" class="input">
+            <option value="starter">Starter · US$ 29 / mes</option>
+            <option value="scale" selected>Scale · US$ 149 / mes</option>
+            <option value="enterprise">Enterprise · A medida</option>
+          </select>
+        </div>
+        <div class="md:col-span-2">
+          <label class="label" for="cities">Ciudades que necesitas</label>
+          <input id="cities" name="cities" type="text" class="input" placeholder="Ej. Bogotá, Medellín, Cali, Barranquilla" />
+        </div>
+        <div class="md:col-span-2">
+          <label class="label" for="message">Cuéntanos tu caso</label>
+          <textarea id="message" name="message" rows="4" class="input" placeholder="Número de vehículos, uso previsto (app/flota/gobierno), integraciones..."></textarea>
+        </div>
+        <div class="md:col-span-2 space-y-2">
+          <label class="flex items-start gap-2 text-sm text-slate-700">
+            <input required type="checkbox" class="mt-0.5 h-4 w-4 accent-brand-600" />
+            <span>Acepto la <a href="/legal/politica-privacidad" target="_blank" class="underline">Política de Privacidad</a> y autorizo tratamiento de datos con fines comerciales.</span>
+          </label>
+          <div class="flex items-center gap-2 text-xs text-slate-500">
+            <span>🔒 Este formulario está protegido por Cloudflare Turnstile.</span>
+            <div id="proTurnstile" class="cf-turnstile" data-theme="light"></div>
+          </div>
+        </div>
+        <div class="md:col-span-2 pt-2">
+          <button type="submit" class="btn-primary w-full md:w-auto md:px-10">
+            📩 Enviar solicitud · Probar 14 días gratis
+          </button>
+        </div>
+      </form>
+
+      <p class="mt-6 text-xs text-slate-500 text-center">
+        Este formulario envía sus datos a Cloudflare D1 (base de datos <code>PICOPLACA_LEADS</code>). Para eliminar tus datos escribe a <code>privacidad@picoyplaca.co</code>.
+      </p>
+    </section>
+
+    <AdSlot id="pro-bottom" size="auto-fluid" lazy />
+  </article>
+  <script is:inline>
+    (function () {
+      var sitekey = (window.__PPC_TURNSTILE_SITEKEY__ || '').trim();
+      if (!sitekey) return;
+      var el = document.getElementById('proTurnstile');
+      if (!el) return;
+      el.setAttribute('data-sitekey', sitekey);
+      var s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      s.async = true; s.defer = true;
+      document.body.appendChild(s);
+    })();
+  </script>
+</BaseLayout>

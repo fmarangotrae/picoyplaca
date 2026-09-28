@@ -1,0 +1,79 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import AdSlot from '@components/AdSlot.astro';
+---
+<BaseLayout
+  seo={{
+    title: 'Términos y Condiciones de Uso · picoyplaca.co',
+    description: 'Términos legales de uso del servicio picoyplaca.co. Información meramente informativa, sin relación con Secretarías de Movilidad oficiales.',
+    noindex: true
+  }}
+>
+  <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Términos y Condiciones' }]} />
+  <article class="mx-auto max-w-3xl py-12">
+    <header class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-widest text-brand-700">Legal</p>
+      <h1 class="mt-2 text-3xl font-black md:text-4xl">Términos y Condiciones de Uso</h1>
+      <p class="mt-3 text-slate-600">Última actualización: 1 de septiembre de 2026.</p>
+    </header>
+    <AdSlot id="legal-tc-top" size="auto-fluid" />
+    <div class="prose prose-slate mt-8 max-w-none">
+      <div class="rounded-xl bg-amber-50 p-5 ring-1 ring-inset ring-amber-500/20 text-amber-900">
+        <p class="m-0 font-semibold">⚠️ Información meramente informativa:</p>
+        <p class="m-0 mt-2 text-sm">picoyplaca.co NO es una fuente oficial ni un servicio de las Secretarías de Movilidad, del Área Metropolitana del Valle de Aburrá (AMVA) ni del Ministerio de Transporte de la República de Colombia. Consulte siempre las fuentes oficiales antes de tomar decisiones de movilidad.</p>
+      </div>
+
+      <h2 class="text-xl font-extrabold mt-8">1. Objeto</h2>
+      <p>El presente documento regula el uso del sitio web <strong>picoyplaca.co</strong> y de todos sus subdominios, páginas, APIs y servicios asociados (en adelante, "el Servicio"). El acceso y uso del Servicio implica la aceptación plena y sin reservas de los presentes Términos y Condiciones.</p>
+
+      <h2 class="text-xl font-extrabold mt-8">2. Registro y Capacidad</h2>
+      <p>El Servicio de consulta pública es gratuito y no requiere registro. Algunos servicios complementarios (Plan Pro, suscripciones) podrán requerir la creación de cuenta y la veracidad de los datos proporcionados. Al registrarse, el usuario declara ser mayor de 18 años y tener capacidad legal para contratar.</p>
+
+      <h2 class="text-xl font-extrabold mt-8">3. Licencia de Uso</h2>
+      <p>Se concede al usuario una licencia limitada, no exclusiva, intransferible y revocable para acceder y usar el Servicio con fines personales o internos empresariales. Queda <strong>expresamente prohibida</strong> la extracción automatizada de datos (scraping), la republicación, el reempaquetado, la creación de productos derivados o el uso comercial de los datos sin autorización escrita previa.</p>
+
+      <h2 class="text-xl font-extrabold mt-8">4. Exactitud de la Información</h2>
+      <p>Nos esforzamos por mantener actualizados los calendarios de restricción con base en fuentes oficiales públicamente disponibles. Sin embargo:</p>
+      <ul>
+        <li>Las rotaciones de dígitos, horarios, exenciones y multas son publicadas directamente por las Secretarías de Movilidad de cada ciudad y pueden cambiar sin previo aviso.</li>
+        <li>No garantizamos la integridad, completitud ni vigencia de los datos mostrados.</li>
+        <li>El usuario acepta que es su responsabilidad confirmar la restricción vigente mediante canales oficiales antes de transitar.</li>
+      </ul>
+
+      <h2 class="text-xl font-extrabold mt-8">5. Limitación de Responsabilidad</h2>
+      <p>En la máxima medida permitida por la legislación colombiana, picoyplaca.co NO será responsable por:</p>
+      <ul>
+        <li>Comparendos, multas, inmovilizaciones, daños materiales, lucro cesante o cualquier otro perjuicio derivado del uso o confianza en la información del Servicio.</li>
+        <li>Interrupciones del servicio, caídas, errores de cálculo, indisponibilidad de Cloudflare Pages o Workers (proveedor infraestructura).</li>
+        <li>Contenidos de sitios web de terceros enlazados mediante hipervínculos o banners de patrocinio (enlaces <code>rel="sponsored noopener noreferrer"</code>).</li>
+      </ul>
+
+      <h2 class="text-xl font-extrabold mt-8">6. Propiedad Intelectual</h2>
+      <p>Todos los contenidos originales (textos, logotipos, interfaces, código fuente, compilaciones de datos y diseños gráficos originales) son propiedad de sus respectivos autores. Las marcas de entidades públicas (Secretarías de Movilidad, Mintransporte, SDM, AMVA) mencionadas son propiedad de sus titulares legales y su mención no implica afiliación ni patrocinio.</p>
+
+      <h2 class="text-xl font-extrabold mt-8">7. Contenido Generado por Usuarios (CGU)</h2>
+      <p>Cuando aplique, el usuario que envíe comentarios, reseñas o formularios declara ser titular de los derechos de autor y otorga a picoyplaca.co una licencia mundial, gratuita y sublicenciable para reproducir, distribuir, modificar y exhibir dichos contenidos dentro del Servicio.</p>
+
+      <h2 class="text-xl font-extrabold mt-8">8. Uso Prohibido</h2>
+      <ul>
+        <li>Usar el Servicio para actividades fraudulentas, delictivas o contrarias a la moral y al orden público.</li>
+        <li>Intentar acceder a áreas administrativas sin autorización, realizar ataques DDoS, de fuerza bruta o de inyección.</li>
+        <li>Suplantar la identidad de otro usuario o de funcionarios públicos.</li>
+        <li>Vender, revender o comercializar información extraída del Servicio sin contrato de afiliación vigente.</li>
+      </ul>
+
+      <h2 class="text-xl font-extrabold mt-8">9. Modificaciones y Terminación</h2>
+      <p>Nos reservamos el derecho de modificar, suspender o dar de baja el Servicio (total o parcialmente) en cualquier momento sin indemnización. Igualmente, podremos actualizar estos Términos; el uso continuado del Servicio tras la publicación implica aceptación.</p>
+
+      <h2 class="text-xl font-extrabold mt-8">10. Legislación Aplicable y Jurisdicción</h2>
+      <p>Para la interpretación, ejecución y cumplimiento de los presentes Términos y Condiciones, las partes se someten a la legislación colombiana y a la jurisdicción ordinaria de los juzgados y tribunales de <strong>Bogotá D.C., Colombia</strong>, renunciando expresamente a cualquier fuero que por razón de domicilio presente o futuro les pudiera corresponder.</p>
+
+      <h2 class="text-xl font-extrabold mt-8">11. Contacto Legal</h2>
+      <p>Consultas legales: <code>legal@picoyplaca.co</code></p>
+    </div>
+    <AdSlot id="legal-tc-bottom" size="auto-fluid" lazy />
+  </article>
+</BaseLayout>

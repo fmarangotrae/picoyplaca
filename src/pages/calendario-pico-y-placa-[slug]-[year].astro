@@ -1,0 +1,152 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import AdSlot from '@components/AdSlot.astro';
+import DigitsRow from '@components/DigitsRow.astro';
+import { CITIES } from '@data/cities';
+import { formatDateISO, getDailyRestriction, parseDate } from '@lib/pico';
+
+export async function getStaticPaths() {
+  const paths: any[] = [];
+  for (const city of CITIES) {
+    for (const year of [2025, 2026, 2027]) {
+      const days = [];
+      const startD = new Date(year, 0, 1);
+      const endD = new Date(year, 11, 31);
+      for (let d = new Date(startD); d <= endD; d.setDate(d.getDate() + 1)) {
+        const iso = formatDateISO(d);
+        const r = getDailyRestriction(city, iso);
+        days.push({
+          iso,
+          weekday: (d.getDay() + 1) % 7,
+          dayOfMonth: d.getDate(),
+          month: d.getMonth() + 1,
+          dayName: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'][d.getDay()],
+          carro: r.perVehicle.carro.restrictedDigits ?? [],
+          carroFree: r.perVehicle.carro.canCirculateFullDay,
+          moto: r.perVehicle.moto.restrictedDigits ?? [],
+          motoFree: r.perVehicle.moto.canCirculateFullDay,
+          taxi: r.perVehicle.taxi.restrictedDigits ?? [],
+          taxiFree: r.perVehicle.taxi.canCirculateFullDay,
+          holiday: r.isHoliday,
+          weekend: r.isWeekend,
+          warnings: r.warnings.length > 0
+        });
+      }
+      paths.push({
+        params: { slug: city.slug, year: String(year) },
+        props: { city, year, days }
+      });
+    }
+  }
+  return paths;
+}
+
+const { slug, year } = Astro.params;
+const { city, days } = Astro.props as any;
+const ynum = Number(year);
+const MONTH_NAMES = [
+  'Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'
+];
+
+const monthsByMonth = new Map<number, typeof days>();
+for (const d of days) {
+  const k = d.month;
+  if (!monthsByMonth.has(k)) monthsByMonth.set(k, []);
+  monthsByMonth.get(k)!.push(d);
+}
+---
+<BaseLayout
+  seo={{
+    title: `Calendario Pico y Placa ${city.name} ${year} · Día por día oficial`,
+    description: `Calendario anual completo ${year} pico y placa ${city.name}. Día por día: dígitos restringidos para carros, motos y taxis. Festivos exentos y horarios oficiales ${city.department}.`,
+    keywords: [
+      `calendario pico y placa ${city.slug} ${year}`,
+      `pico y placa ${city.slug} ${year} calendario`
+    ]
+  }}
+>
+  <Breadcrumb
+    items={[
+      { label: 'Inicio', href: '/' },
+      { label: 'Ciudades', href: '/ciudades' },
+      { label: city.name, href: `/${city.slug}` },
+      { label: `Calendario ${year}` }
+    ]}
+  />
+  <header class="mb-6">
+    <p class="text-xs font-semibold uppercase tracking-widest text-brand-700">
+      Calendario oficial · {city.name}
+    </p>
+    <h1 class="mt-2 text-3xl font-black md:text-4xl">
+      Calendario Pico y Placa {city.name} {year} · día por día
+    </h1>
+    <p class="mt-3 max-w-3xl text-slate-600">
+      Encuentra la restricción para cada día del {year} en {city.name}. Incluye festivos, fin de semana y
+      los tres tipos de vehículos más comunes.
+    </p>
+  </header>
+
+  <AdSlot id={`cal-${city.slug}-${year}-top`} size="leaderboard-728x90" text={`Calendario ${city.name} ${year}`} />
+
+  <div class="space-y-8">
+    {Array.from(monthsByMonth.entries()).sort((a, b) => a[0] - b[0]).map(([month, list]) => (
+      <section class="card overflow-hidden">
+        <header class="border-b border-slate-200 bg-slate-50 p-4 flex items-center justify-between">
+          <h2 class="text-lg font-extrabold text-slate-800">{MONTH_NAMES[month-1]} {year}</h2>
+          <a class="text-sm font-semibold text-brand-700" href={`/pico-y-placa/${city.slug}/${String(month).padStart(2,'0')}/${year}`}>
+            Ver mes detallado →
+          </a>
+        </header>
+        <div class="p-4">
+          <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            {['Do','Lu','Ma','Mi','Ju','Vi','Sá'].map(d => <div class="p-2">{d}</div>)}
+          </div>
+          <div class="grid grid-cols-7 gap-1">
+            {(() => {
+              const first = list[0];
+              const firstDow = parseDate(first.iso).getDay();
+              const blanks = Array.from({ length: firstDow });
+              return [
+                ...blanks.map((_, i) => <div key={`blank-${i}`} class="p-1 min-h-[84px]"></div>),
+                ...list.map((d: any) => (
+                  <div
+                    class={`rounded-md border p-2 text-center min-h-[84px] transition ${
+                      d.holiday ? 'bg-warning-50 border-warning-500/40' :
+                      d.weekend ? 'bg-slate-50 border-slate-200' :
+                      'bg-white border-slate-200'
+                    }`}
+                  >
+                    <div class="flex items-center justify-between text-[10px] text-slate-500">
+                      <span>{d.dayName}</span>
+                      <span>{d.warnings ? '⚠️' : ''}{d.holiday ? '🎉' : ''}</span>
+                    </div>
+                    <div class="font-bold tabular-nums text-slate-900">{d.dayOfMonth}</div>
+                    <div class="mt-1 space-y-1 text-[10px]">
+                      <div title="Carro">
+                        <span class="opacity-60">C</span>{' '}
+                        {d.carroFree ? <span class="text-success-600 font-semibold">Libre</span> : <DigitsRow size="sm" restricted digits={d.carro} />}
+                      </div>
+                      <div title="Moto">
+                        <span class="opacity-60">M</span>{' '}
+                        {d.motoFree ? <span class="text-success-600 font-semibold">Libre</span> : <DigitsRow size="sm" restricted digits={d.moto} />}
+                      </div>
+                      <div title="Taxi">
+                        <span class="opacity-60">T</span>{' '}
+                        {d.taxiFree ? <span class="text-success-600 font-semibold">Libre</span> : <DigitsRow size="sm" restricted digits={d.taxi} />}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ];
+            })()}
+          </div>
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <AdSlot id={`cal-${city.slug}-${year}-bottom`} size="auto-fluid" lazy />
+</BaseLayout>

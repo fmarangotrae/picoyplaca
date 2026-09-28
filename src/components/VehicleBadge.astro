@@ -1,0 +1,36 @@
+---
+import type { VehicleKind } from '../types';
+
+export interface Props {
+  kind: VehicleKind;
+  name?: string;
+}
+
+const { kind, name } = Astro.props;
+
+const LABELS: Record<VehicleKind, string> = {
+  carro: 'Carros particulares',
+  moto: 'Motos',
+  taxi: 'Taxis',
+  carga: 'Vehículos de carga',
+  publico: 'Transporte público',
+  escolar: 'Escolares',
+  emergencia: 'Emergencia',
+  electricos: 'Eléctricos / 0 emisiones'
+};
+
+const ICONS: Record<VehicleKind, string> = {
+  carro: '🚗',
+  moto: '🏍️',
+  taxi: '🚕',
+  carga: '🚛',
+  publico: '🚌',
+  escolar: '🚐',
+  emergencia: '🚑',
+  electricos: '⚡'
+};
+---
+<span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-800">
+  <span aria-hidden="true">{ICONS[kind]}</span>
+  <span>{name ?? LABELS[kind]}</span>
+</span>

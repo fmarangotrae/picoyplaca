@@ -1,0 +1,35 @@
+name = "picoyplaca-co"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "./dist"
+
+# KV Namespaces (FREE TIER MÁXIMO 2, usamos exactamente 2)
+[[kv_namespaces]]
+binding = "PICOPLACA_CONFIG"
+id = "fc1023973f674e4baea127ffbcd58cea"
+preview_id = "fc1023973f674e4baea127ffbcd58cea"
+
+[[kv_namespaces]]
+binding = "PICOPLACA_ADS"
+id = "72c1af93d04d4899a25a4178ec4cb823"
+preview_id = "72c1af93d04d4899a25a4178ec4cb823"
+
+# D1 Databases (FREE permite 25; usamos 2)
+[[d1_databases]]
+binding = "PICOPLACA_BLOG"
+database_name = "PICOPLACA_BLOG"
+database_id = "dd28d9e2-aeff-4250-b9b0-092d76e12acd"
+preview_database_id = "dd28d9e2-aeff-4250-b9b0-092d76e12acd"
+
+[[d1_databases]]
+binding = "PICOPLACA_LEADS"
+database_name = "PICOPLACA_LEADS"
+database_id = "6da7909e-37c7-4870-aef2-fb4ba9c82c93"
+preview_database_id = "6da7909e-37c7-4870-aef2-fb4ba9c82c93"
+
+[vars]
+ENVIRONMENT = "production"
+SITE_URL = "https://picoyplaca.co"
+GOOGLE_ADSENSE_CLIENT_ID = "ca-pub-1345146467545386"
+GA4_MEASUREMENT_ID = "G-L3YWY3L4RT"
+TURNSTILE_SITE_KEY = "0x4AAAAAAFAVbf-SPsSfsy_M"
+TURNSTILE_SECRET_KEY = "0x4AAAAAAFAVbTrdSkpwYJh-c0jdTDqmP2g"

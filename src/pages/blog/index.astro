@@ -1,0 +1,71 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import AdSlot from '@components/AdSlot.astro';
+import { BLOG_POSTS_SEED } from '@data/content-seed';
+
+const posts = BLOG_POSTS_SEED;
+const categories = Array.from(new Set(posts.map(p => p.category)));
+---
+<BaseLayout seo={{
+  title: 'Blog de Pico y Placa Colombia · Guías, normativas y actualizaciones 2026',
+  description: `Blog de picoyplaca.co: ${posts.length} artículos actualizados sobre rotaciones, multas UVB, Día sin Carro, exenciones vehículos eléctricos, apps para rutas y normativas oficiales.`,
+  keywords: ['blog pico y placa', 'guia pico y placa colombia', 'normativas movilidad 2026']
+}}>
+  <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Blog' }]} />
+  <section class="mx-auto max-w-6xl py-12 px-6">
+    <header class="mb-10">
+      <p class="text-xs font-semibold uppercase tracking-widest text-brand-700">📚 Blog · Publicaciones</p>
+      <h1 class="mt-2 text-3xl font-black md:text-5xl">Todo sobre el Pico y Placa en Colombia</h1>
+      <p class="mt-4 max-w-3xl text-slate-700 text-lg">Guías prácticas, normativas oficiales, análisis de rotaciones y consejos para no pagar multas. Contenido actualizado por el equipo editorial con fuentes del Mintransporte y Secretarías de Movilidad.</p>
+    </header>
+
+    <div class="flex flex-wrap gap-2 mb-8">
+      <a href="#todos" class="badge bg-brand-600 text-white !text-sm !py-1.5 !px-3">📰 Todas ({posts.length})</a>
+      {categories.map(cat => (
+        <a href={`#${cat.toLowerCase().replace(/\s+/g, '-')}`} class="badge bg-slate-100 text-slate-700 !text-sm !py-1.5 !px-3 hover:bg-slate-200 transition">
+          {cat} ({posts.filter(p => p.category === cat).length})
+        </a>
+      ))}
+    </div>
+
+    <AdSlot id="blog-top" size="leaderboard-728x90" />
+
+    <div id="todos" class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {posts.map(post => (
+        <a href={`/blog/${post.slug}`} class="card overflow-hidden group hover:ring-brand-400 transition-all flex flex-col">
+          <div class="aspect-video w-full bg-gradient-to-br from-brand-100 via-brand-50 to-slate-100 flex items-center justify-center text-5xl">
+            {post.category.includes('Guías') && '🧭'}
+            {post.category.includes('Normativas') && '⚖️'}
+            {post.category.includes('Actualizaciones') && '🔔'}
+            {post.category.includes('Multas') && '💸'}
+            {post.category.includes('Eventos') && '🎉'}
+            {post.category.includes('Bogotá') && '🏙️'}
+            {post.category.includes('Herramientas') && '🛠️'}
+            {post.category.includes('Medellín') && '🌄'}
+            {post.category.includes('Calendarios') && '📅'}
+            {post.category.includes('Comparativas') && '📊'}
+          </div>
+          <div class="p-5 flex-1 flex flex-col">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="badge bg-slate-100 text-slate-700 !text-[10px] uppercase tracking-wider">{post.category}</span>
+              <span class="text-xs text-slate-500">🕒 {post.publishedAt}</span>
+            </div>
+            <h2 class="mt-3 text-lg font-extrabold text-slate-900 group-hover:text-brand-700 transition-colors">
+              {post.title}
+            </h2>
+            <p class="mt-2 text-sm text-slate-700 line-clamp-3 flex-1">{post.description}</p>
+            <div class="mt-4 flex items-center justify-between text-xs text-slate-500">
+              <span>✍️ {post.author}</span>
+              <span class="font-semibold text-brand-700 group-hover:translate-x-1 transition">Leer →</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <AdSlot id="blog-bottom" size="auto-fluid" lazy />
+  </section>
+</BaseLayout>

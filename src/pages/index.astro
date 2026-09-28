@@ -1,0 +1,343 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import CityDailyPanel from '@components/CityDailyPanel.astro';
+import DigitsRow from '@components/DigitsRow.astro';
+import AdSlot from '@components/AdSlot.astro';
+import SponsorBanner from '@components/SponsorBanner.astro';
+import VehicleBadge from '@components/VehicleBadge.astro';
+import PlateCheckerIsland from '@components/islands/PlateCheckerIsland.tsx';
+
+import { CITIES } from '@data/cities';
+import { DEFAULT_BANNERS } from '@data/default-config';
+import { FINE_CONFIG } from '@data/fines';
+import { BLOG_POSTS_SEED } from '@data/content-seed';
+import { getDailyRestriction, formatDateISO } from '@lib/pico';
+import { getActiveEvents } from '@data/special-events';
+import { DAY_RECOMMENDATIONS } from '@data/fines';
+
+const today = formatDateISO(new Date());
+const ciudadSlugs = CITIES.map(c => c.slug);
+const activeEvents = getActiveEvents(today, ciudadSlugs);
+
+const WEEKDAY_NAMES = [
+  'Domingo',
+  'Lunes',
+  'Martes',
+  'Miércoles',
+  'Jueves',
+  'Viernes',
+  'Sábado'
+];
+
+function labelDate(iso: string): string {
+  const d = new Date(iso + 'T00:00:00');
+  return `${WEEKDAY_NAMES[d.getDay()]} ${d.getDate()} de ${[
+    'enero',
+    'febrero',
+    'marzo',
+    'abril',
+    'mayo',
+    'junio',
+    'julio',
+    'agosto',
+    'septiembre',
+    'octubre',
+    'noviembre',
+    'diciembre'
+  ][d.getMonth()]} de ${d.getFullYear()}`;
+}
+
+const todayLabel = labelDate(today);
+
+const restrictions = CITIES.map(city => ({
+  city,
+  r: getDailyRestriction(city, today)
+}));
+
+const FAQ = [
+  {
+    q: '¿Qué es el pico y placa en Colombia?',
+    a: 'Es una medida de restricción vehicular para reducir la congestión y la contaminación en horas pico. Se basa en el último dígito de la placa (o el primero para motos en Medellín). Cada ciudad define horarios, días y rotaciones semestrales.'
+  },
+  {
+    q: '¿Cuánto cuesta la multa por pico y placa en 2026?',
+    a: `La multa corresponde a ${FINE_CONFIG.uvb2026} UVB, alrededor de $${FINE_CONFIG.amountCops2026.toLocaleString('es-CO')} COP (saldo). Cuenta con 50% de descuento pronto pago en los primeros 5 días hábiles si pagas y haces el curso de educación vial.`
+  },
+  {
+    q: '¿Los vehículos eléctricos tienen restricción?',
+    a: 'No. La Ley 1964 de 2019 establece exención permanente para vehículos cero emisiones (100% eléctricos) en todas las ciudades. Híbridos enchufables NO son exentos en Bogotá y la mayoría de ciudades, excepto Medellín en algunos períodos. Consulta siempre tu Secretaría de Movilidad.'
+  },
+  {
+    q: '¿Cómo funciona la rotación semestral?',
+    a: 'Cada 6 meses las asignaciones de dígitos por día cambian. Lo que correspondía al lunes pasa a martes, y así sucesivamente. En picoyplaca.co puedes parametrizar manualmente el shiftOffset si una ciudad decide adelantar o retrasar la rotación respecto al calendario.'
+  },
+  {
+    q: '¿Los festivos hay pico y placa?',
+    a: 'No, en la mayoría de ciudades colombianas los festivos están exentos. Verifica el panel de cada ciudad para confirmaciones y excepciones.'
+  },
+  {
+    q: '¿Dónde puedo pagar la placa solidaria (Pico y Placa Solidario)?',
+    a: 'En Bogotá se gestiona en el sitio oficial de la Secretaría de Movilidad. Actualmente tiene un costo diario y puedes inscribir vehículos por días necesarios.'
+  }
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ.map(f => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: f.a
+    }
+  }))
+};
+
+const sponsorTop = DEFAULT_BANNERS.find(b => b.position === 'top-hero');
+const sponsorSide = DEFAULT_BANNERS.find(b => b.position === 'side');
+---
+<BaseLayout
+  seo={{
+    title: `Pico y Placa HOY ${todayLabel} · Colombia 2026`,
+    description: `Consulta el pico y placa de HOY ${todayLabel} en Bogotá, Medellín, Cali, Barranquilla, Bucaramanga y Cartagena. Dígitos restringidos, horarios, multa 52,29 UVB ($633.111) y recomendaciones oficiales.`,
+    keywords: [
+      `pico y placa ${todayLabel.toLowerCase()}`,
+      'pico y placa hoy',
+      'digito pico y placa hoy colombia',
+      'pico y placa bogota hoy',
+      'pico y placa medellin hoy',
+      'pico y placa cali hoy'
+    ],
+    jsonLd: faqJsonLd
+  }}
+>
+  <Breadcrumb items={[{ label: 'Inicio' }]} />
+
+  {sponsorTop && <SponsorBanner banner={sponsorTop} />}
+
+  <section class="mt-2 mb-10 grid gap-8 lg:grid-cols-[1fr,320px]">
+    <div class="space-y-8">
+      <div class="rounded-3xl bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 p-6 text-white shadow-lg md:p-8">
+        <p class="text-sm font-semibold uppercase tracking-widest text-brand-100/90">
+          📅 {todayLabel.toUpperCase()}
+        </p>
+        <h1 class="mt-2 text-3xl font-black leading-tight md:text-4xl">
+          Pico y placa HOY en Colombia · dígitos restringidos por ciudad
+        </h1>
+        <p class="mt-3 max-w-2xl text-brand-50/90">
+          Selecciona una ciudad o usa el verificador para saber si tu placa puede circular hoy.
+          Datos oficiales con las rotaciones del semestre actual y próximos cambios.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-3">
+          <a href="#verificador" class="btn bg-white text-brand-700 hover:bg-brand-50 shadow-md shadow-brand-900/30">
+            🔎 Verificar mi placa ahora
+          </a>
+          <a href="#ciudades" class="btn border border-white/40 text-white hover:bg-white/10 hover:no-underline">
+            🏙️ Ver todas las ciudades
+          </a>
+        </div>
+        <div class="mt-6 grid gap-4 sm:grid-cols-3">
+          <div class="rounded-xl bg-white/10 p-4 ring-1 ring-inset ring-white/20">
+            <p class="text-xs uppercase tracking-widest text-white/80">Multa 2026</p>
+            <p class="mt-1 text-2xl font-black">52,29 UVB</p>
+            <p class="mt-1 text-sm text-white/85">≈ $633.111 COP</p>
+          </div>
+          <div class="rounded-xl bg-white/10 p-4 ring-1 ring-inset ring-white/20">
+            <p class="text-xs uppercase tracking-widest text-white/80">Ciudades cubiertas</p>
+            <p class="mt-1 text-2xl font-black">{CITIES.length}+</p>
+            <p class="mt-1 text-sm text-white/85">Bogotá, Medellín, Cali…</p>
+          </div>
+          <div class="rounded-xl bg-white/10 p-4 ring-1 ring-inset ring-white/20">
+            <p class="text-xs uppercase tracking-widest text-white/80">Vehículos</p>
+            <p class="mt-1 text-2xl font-black">8 tipos</p>
+            <p class="mt-1 text-sm text-white/85">Carro, moto, taxi, eléctricos…</p>
+          </div>
+        </div>
+      </div>
+
+      <PlateCheckerIsland client:visible />
+
+      <AdSlot id="home-hero" size="leaderboard-728x90" text="AdSense · Atrayente ubicación home" />
+
+      {activeEvents.length > 0 && (
+        <section id="eventos" aria-label="Eventos especiales">
+          <h2 class="mb-3 text-xl font-extrabold text-slate-900">🎯 Eventos especiales HOY</h2>
+          <div class="grid gap-4 md:grid-cols-2">
+            {activeEvents.map(ev => (
+              <article class="card p-5">
+                <p class="text-xs uppercase tracking-widest text-warning-600">Evento oficial</p>
+                <h3 class="mt-1 text-lg font-bold">{ev.title}</h3>
+                <p class="mt-2 text-sm text-slate-700">{ev.description}</p>
+                {ev.sourceUrl && (
+                  <a
+                    href={ev.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="mt-3 inline-block text-sm font-semibold text-brand-700"
+                  >
+                    Ver fuente oficial ↗
+                  </a>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+
+    <aside aria-label="Sidebar" class="space-y-5">
+      {sponsorSide && <SponsorBanner banner={sponsorSide} />}
+
+      <div class="card p-5">
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Recomendación HOY</h3>
+        <div class="mt-3 space-y-3">
+          <div class="rounded-xl bg-success-50 p-4 text-success-800 ring-1 ring-inset ring-success-500/15">
+            <p class="font-bold text-sm">⚡ Vehículos eléctricos</p>
+            <ul class="mt-2 list-inside list-disc space-y-1 text-sm">
+              {DAY_RECOMMENDATIONS.electric.slice(0, 2).map(l => <li>{l}</li>)}
+            </ul>
+          </div>
+          <div class="rounded-xl bg-danger-50 p-4 text-danger-800 ring-1 ring-inset ring-danger-500/15">
+            <p class="font-bold text-sm">⛔ Si te toca parar</p>
+            <ul class="mt-2 list-inside list-disc space-y-1 text-sm">
+              {DAY_RECOMMENDATIONS.restricted.slice(0, 3).map(l => <li>{l}</li>)}
+            </ul>
+          </div>
+          <div class="rounded-xl bg-brand-50 p-4 text-brand-800 ring-1 ring-inset ring-brand-500/15">
+            <p class="font-bold text-sm">🚕 Taxis con restricción</p>
+            <ul class="mt-2 list-inside list-disc space-y-1 text-sm">
+              {DAY_RECOMMENDATIONS['taxi-restricted'].slice(0, 2).map(l => <li>{l}</li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <AdSlot id="home-sidebar" size="medium-rectangle-300x250" sticky text="AdSense · Sidebar home" />
+    </aside>
+  </section>
+
+  <section id="ciudades" class="mt-16 space-y-10 scroll-mt-24">
+    <header class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest text-brand-700">Ciudades principales</p>
+        <h2 class="mt-1 text-2xl font-extrabold tracking-tight md:text-3xl">
+          Pico y placa HOY {todayLabel} · 6 ciudades
+        </h2>
+      </div>
+      <a href="/ciudades" class="text-sm font-semibold text-brand-700">Ver todas las ciudades y rutas →</a>
+    </header>
+
+    {restrictions.map(({ city, r }) => (
+      <article id={city.slug} class="scroll-mt-24">
+        <CityDailyPanel city={city} restriction={r} dateLabel={todayLabel} />
+      </article>
+    ))}
+  </section>
+
+  <section class="mt-16 grid gap-6 lg:grid-cols-3">
+    <article class="card p-6 lg:col-span-2">
+      <h3 class="text-lg font-extrabold">Cuadro rápido: dígitos restringidos HOY por ciudad</h3>
+      <div class="mt-5 overflow-x-auto">
+        <table class="min-w-full text-left text-sm">
+          <thead>
+            <tr class="border-b border-slate-200">
+              <th scope="col" class="py-3 pr-4">Ciudad</th>
+              <th scope="col" class="py-3 px-3">Carros (último dígito)</th>
+              <th scope="col" class="py-3 px-3">Motos</th>
+              <th scope="col" class="py-3 px-3">Taxis</th>
+            </tr>
+          </thead>
+          <tbody>
+            {restrictions.map(({ city, r }) => (
+              <tr class="border-b border-slate-100">
+                <th scope="row" class="py-3 pr-4 font-semibold text-slate-800">
+                  <a href={`/${city.slug}`} class="hover:no-underline">{city.name}</a>
+                </th>
+                <td class="py-3 px-3"><DigitsRow size="sm" digits={r.perVehicle.carro.restrictedDigits ?? []} restricted={!r.perVehicle.carro.canCirculateFullDay} /></td>
+                <td class="py-3 px-3"><DigitsRow size="sm" digits={r.perVehicle.moto.restrictedDigits ?? []} restricted={!r.perVehicle.moto.canCirculateFullDay} /></td>
+                <td class="py-3 px-3"><DigitsRow size="sm" digits={r.perVehicle.taxi.restrictedDigits ?? []} restricted={!r.perVehicle.taxi.canCirculateFullDay} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="card p-6">
+      <h3 class="text-lg font-extrabold">🚶 Alternativas sin pico y placa</h3>
+      <ul class="mt-4 space-y-3 text-sm">
+        <li class="flex gap-3"><span>🚌</span><span><strong>Transmetro / Transmilenio</strong>: evita horas pico 7-9 a.m. y 5-7 p.m.</span></li>
+        <li class="flex gap-3"><span>🚲</span><span><strong>Bicitáxi / Bicicleta</strong>: carriles exclusivos y parqueaderos seguros.</span></li>
+        <li class="flex gap-3"><span>🛵</span><span><strong>Moto eléctrica</strong>: exenta permanentemente en todo el país.</span></li>
+        <li class="flex gap-3"><span>🏢</span><span><strong>Teletrabajo</strong>: dos días por semana reduce tu exposición a multas.</span></li>
+      </ul>
+      <div class="mt-5 rounded-xl bg-amber-50 p-4 text-sm text-amber-800 ring-1 ring-inset ring-amber-500/20">
+        💡 Tip: guarda esta página en tu pantalla de inicio para consultarla cada mañana.
+      </div>
+    </article>
+  </section>
+
+  <AdSlot id="home-inline-mid" size="medium-rectangle-300x250" lazy />
+
+  <section id="blog-preview" class="mt-16 scroll-mt-24">
+    <header class="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest text-brand-700">Blog y novedades</p>
+        <h2 class="mt-1 text-2xl font-extrabold md:text-3xl">Guías y actualizaciones oficiales</h2>
+      </div>
+      <a href="/blog" class="text-sm font-semibold text-brand-700">Ver todos los artículos →</a>
+    </header>
+    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {BLOG_POSTS_SEED.slice(0, 6).map(p => (
+        <a href={`/blog/${p.slug}`} class="card p-5 group hover:-translate-y-0.5 hover:shadow-lg transition">
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-brand-700">{p.category}</p>
+          <h3 class="mt-2 line-clamp-2 font-bold text-slate-900 group-hover:text-brand-700">{p.title}</h3>
+          <p class="mt-2 line-clamp-3 text-sm text-slate-600">{p.description}</p>
+          <div class="mt-4 flex items-center gap-3 text-xs text-slate-500">
+            <span>✍️ {p.author}</span>
+            <span>·</span>
+            <time datetime={p.publishedAt}>{new Date(p.publishedAt).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })}</time>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section id="faq" class="mt-16 scroll-mt-24">
+    <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 md:p-8">
+      <h2 class="text-2xl font-extrabold md:text-3xl">Preguntas frecuentes sobre el pico y placa en Colombia</h2>
+      <div class="mt-6 space-y-5">
+        {FAQ.map((f, i) => (
+          <details class="group rounded-xl border border-slate-200 bg-slate-50/50 p-5 open:bg-white" open={i === 0}>
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-slate-800">
+              <span>{f.q}</span>
+              <span class="text-xl font-light text-slate-400 group-open:rotate-45 transition-transform" aria-hidden="true">+</span>
+            </summary>
+            <p class="mt-3 text-sm leading-relaxed text-slate-700">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-16 rounded-3xl bg-gradient-to-br from-slate-900 to-brand-900 p-6 text-white shadow-xl md:p-10">
+    <div class="grid gap-6 md:grid-cols-2 md:items-center">
+      <div>
+        <span class="badge bg-white/10 text-brand-100 ring-1 ring-inset ring-white/20">B2B · Empresas y flotas</span>
+        <h2 class="mt-3 text-2xl font-black md:text-3xl">¿Tienes una flota con 10+ vehículos? Evita 100% los comparendos.</h2>
+        <p class="mt-3 text-brand-50/90">
+          El Plan Pro envía alertas diarias por ciudad, integración con hojas de ruta, panel administrativo y API JSON para tu software de gestión.
+        </p>
+      </div>
+      <div class="flex justify-start md:justify-end">
+        <a href="/pro" class="btn bg-white text-brand-800 shadow-lg hover:bg-brand-50 text-base px-6 py-3">
+          Ver Plan Pro · Gratis probar 14 días →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <AdSlot id="verificador-below" size="auto-fluid" lazy text="Anuncio AdSense · Footer home" />
+</BaseLayout>

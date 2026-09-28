@@ -1,0 +1,120 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumb from '@components/Breadcrumb.astro';
+import AdSlot from '@components/AdSlot.astro';
+import { COMPARISON_SEED } from '@data/content-seed';
+
+const items = COMPARISON_SEED['mejores-renting-carros-colombia'];
+
+const faqItems = [
+  { q: '¿Renting me exime del pico y placa?', a: 'SÍ, si el vehículo Renting es 0km (o menor a 3 años según ciudad) y está matriculado como servicio de movilidad empresarial. Todas las opciones destacadas aquí incluyen esa exención para Bogotá, Medellín y Cali.' },
+  { q: '¿Qué incluye el plan de renting?', a: 'Generalmente incluye: Seguro todo riesgo + RC, mantenimientos preventivos/correctivos, llantas, auxilio vial 24/7, reemplazo de neumáticos, trámite de SOAT y Tecnomecánica. Algunos agregan combustible prepago y GPS.' },
+  { q: '¿Renting o leasing? Diferencias', a: 'Renting = alquiler operativo puro, sin opción a compra. Pagas fijo mensual. Leasing = arrendamiento financiero con opción a compra al final (valor residual). Renting es mejor si solo quieres olvidarte del carro.' },
+  { q: '¿Plazo mínimo de contrato?', a: 'Renting tradicional: 24 meses mínimo. Operadores especializados (ej. Localiza Flex) permiten 6 o 12 meses, con penalización por cancelación anticipada (~3 mensualidades).' },
+  { q: '¿Puedo usar para Uber o plataformas?', a: 'Solo si contratas el plan especial "plataformas digitales" o "movilidad APP". Algunos operadores prohíben el uso para transporte público remunerado no declarado en el contrato.' }
+];
+---
+<BaseLayout seo={{
+  title: 'Mejores Renting de Carros Colombia 2026 · Exentos Pico y Placa',
+  description: `Top ${items.length} empresas de renting vehicular empresarial y personal en Colombia. Planes flexibles exentos de pico y placa, seguro todo riesgo y mantenimiento incluido.`,
+  keywords: ['mejores renting carros colombia', 'vehiculos exentos pico y placa', 'renting bogota medellin', 'plan renting empresarial']
+}}>
+  <Breadcrumb items={[{ label: 'Inicio', href: '/' }, { label: 'Comparativas' }, { label: 'Renting Carros 2026' }]} />
+  <article class="mx-auto max-w-5xl py-12">
+    <header class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-widest text-brand-700">💼 Solución empresarial · Actualizada sep 2026</p>
+      <h1 class="mt-2 text-3xl font-black md:text-5xl">Renting de Carros en Colombia 2026: Vehículos Exentos del Pico y Placa</h1>
+      <p class="mt-4 max-w-3xl text-lg text-slate-700">Para empresarios, ejecutivos y startups que no quieren perder tiempo con trámites, mantenimientos ni el pico y placa. Comparativa de proveedores con servicio nacional y planes a 12/24/36/48 meses.</p>
+    </header>
+
+    <AdSlot id="rent-top" size="leaderboard-728x90" />
+
+    <div class="mt-8 grid gap-6 lg:grid-cols-2">
+      {items.map((item, i) => (
+        <article id={item.slug} class="card flex flex-col">
+          <div class="p-6 pb-4 flex items-center justify-between border-b border-slate-100">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-xl font-extrabold">{item.name}</h2>
+                {item.badge && <span class="badge bg-success-50 text-success-800 !text-xs">{item.badge}</span>}
+              </div>
+              <p class="mt-1 text-sm text-slate-600">{item.description}</p>
+            </div>
+            <div class="text-amber-600 flex items-center gap-1">
+              <span class="text-xl">{'⭐'.repeat(Math.round(item.rating))}</span>
+              <span class="font-black">{item.rating}</span>
+            </div>
+          </div>
+          <div class="p-6 space-y-4 flex-1 flex flex-col">
+            <div>
+              <p class="font-semibold text-success-800 text-sm mb-1">✅ Incluye</p>
+              <ul class="text-sm text-slate-700 space-y-1 list-disc list-inside">
+                {item.pros.map(p => <li>{p}</li>)}
+              </ul>
+            </div>
+            <div>
+              <p class="font-semibold text-danger-800 text-sm mb-1">⚠️ Considerar</p>
+              <ul class="text-sm text-slate-700 space-y-1 list-disc list-inside">
+                {item.cons.map(c => <li>{c}</li>)}
+              </ul>
+            </div>
+            <div class="mt-auto pt-4 flex items-end justify-between gap-3">
+              <div>
+                <p class="text-xs uppercase tracking-wider text-slate-500">Mensualidad</p>
+                <p class="text-2xl font-black">{item.price}</p>
+              </div>
+              <a href={item.affiliateUrl} target="_blank" rel="sponsored noopener noreferrer" class="btn-primary">
+                Solicitar oferta →
+              </a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <AdSlot id="rent-mid" size="auto-fluid" lazy />
+
+    <section class="mt-12 grid gap-6 md:grid-cols-3">
+      <div class="card p-5">
+        <p class="text-2xl">💳</p>
+        <h3 class="mt-3 text-lg font-extrabold">Gasto deducible de impuestos</h3>
+        <p class="mt-2 text-sm text-slate-700">El 100% de la cuota mensual es gasto operativo para empresas (personas jurídicas) y monotributadores: reduce tu base de renta y tu declaración de IVA.</p>
+      </div>
+      <div class="card p-5">
+        <p class="text-2xl">🚫</p>
+        <h3 class="mt-3 text-lg font-extrabold">Sin pico y placa de por sí</h3>
+        <p class="mt-2 text-sm text-slate-700">Vehículos empresariales categoría "movilidad" y 0km entran en la exención del par/impar y dígitos por día en todas las ciudades con restricción.</p>
+      </div>
+      <div class="card p-5">
+        <p class="text-2xl">📊</p>
+        <h3 class="mt-3 text-lg font-extrabold">KPI, reporting y control</h3>
+        <p class="mt-2 text-sm text-slate-700">Plataformas como Alphabet ofrecen dashboard BI en tiempo real: consumo combustible, mantenimiento, ubicación GPS, infracciones y siniestros por conductor.</p>
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-black">❓ FAQ Renting Colombia</h2>
+      <div class="mt-5 space-y-3">
+        {faqItems.map((f, i) => (
+          <details class="card !p-0 group">
+            <summary class="cursor-pointer p-4 font-semibold list-none flex justify-between items-start gap-4">
+              <span>{f.q}</span>
+              <span class="text-brand-600 group-open:rotate-45 transition text-2xl leading-none shrink-0">+</span>
+            </summary>
+            <div class="px-4 pb-4 pt-0 text-slate-700 border-t border-slate-100">
+              <p class="pt-4">{f.a}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <p class="mt-10 text-xs text-slate-500">
+      Divulgación: Links afiliados <code>rel="sponsored"</code>. Las condiciones de los planes (plazo, kilometraje, deducible, coberturas) son actualizadas directamente por las empresas de renting. Condiciones contractuales sujetas a verificación de scoring crediticio por parte del operador.
+    </p>
+
+    <AdSlot id="rent-bottom" size="auto-fluid" lazy />
+  </article>
+</BaseLayout>
