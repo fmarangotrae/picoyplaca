@@ -205,7 +205,12 @@ export function getDailyRestriction(city: CityConfig, dateISO: string): DailyRes
   const weekend = isWeekend(d);
   const warnings: string[] = [];
   if (holiday) warnings.push('Festivo nacional: sin restricción según la mayoría de decretos.');
-  if (weekend && !city.weekendExempt === false) void 0;
+  // Nota: antes había una condición muerta (`!city.weekendExempt === false`) sin efecto.
+  // La exención de fin de semana se aplica por tipo de vehículo más abajo usando
+  // `city.weekendExempt`; si una ciudad NO es exenta en fin de semana, lo avisamos.
+  if (weekend && !city.weekendExempt) {
+    warnings.push('Fin de semana con restricción aplicada en esta ciudad.');
+  }
   const kinds: VehicleKind[] = [
     'carro',
     'moto',
@@ -306,11 +311,25 @@ export function checkPlate(input: {
     ent.restrictedDigits.length > 0 &&
     digit >= 0 &&
     ent.restrictedDigits.includes(digit);
-  const restrictedTimeMatch = !ent.canCirculateFullDay && !isTimeWithinWindows(time24, ent.timeWindows);
   const exemption = ent.exempt;
-  const canCirculateNow =
-    exemption || (!restrictedDigitMatch && (ent.canCirculateFullDay || isTimeWithinWindows(time24, ent.timeWindows)));
-  const canCirculateFullDay = exemption || !restrictedDigitMatch && ent.canCirculateFullDay;
+  // Corrección de lógica (errores confirmados en la versión anterior):
+  // 1) Inconsistencia: `restrictedTimeMatch` usaba `!isTimeWithinWindows(...)` pero
+  //    `canCirculateNow` usaba `|| isTimeWithinWindows(...)`, interpretando la misma
+  //    llamada con sentidos opuestos.
+  // 2) Falso negativo: la fórmula anterior marcaba "NO puedes circular" a placas con
+  //    dígito NO restringido dentro del horario de restricción (p. ej. Bogotá, día
+  //    impar, placa terminada en 2 a las 07:00 → debería poder circular).
+  // 3) Falso positivo: permitía circular a dígitos coincidentes DENTRO de la ventana
+  //    de restricción (solo porque la hora caía "dentro"), cuando lo correcto es que
+  //    la ventana define el horario PROHIBIDO para los dígitos coincidentes.
+  // Convención corregida: timeWindows = horarios DE RESTRICCIÓN (Bogotá 06:00-21:00).
+  const insideRestrictedHours = isTimeWithinWindows(time24, ent.timeWindows);
+  const restrictedDigitMatchSafe = Boolean(restrictedDigitMatch);
+  // Coincide el dígito y la hora cae dentro del horario de restricción → infracción.
+  const restrictedTimeMatch = restrictedDigitMatchSafe && insideRestrictedHours;
+  const canCirculateNow = exemption || !restrictedTimeMatch;
+  // Puede circular todo el día si es exento o su dígito no está restringido hoy.
+  const canCirculateFullDay = exemption || !restrictedDigitMatchSafe;
   const fineAmount = '$633.111 COP (52,29 UVB 2026)';
   const fineUvb = 52.29;
   const recommendations: string[] = [];

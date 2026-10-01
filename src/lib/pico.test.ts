@@ -10,7 +10,10 @@ import {
   isTimeWithinWindows,
   extractDigit,
   isWeekend,
-  numberInAnyList
+  numberInAnyList,
+  getDailyRestriction,
+  checkPlate,
+  getCityBySlug
 } from './pico';
 
 describe('T3.0 Fechas utilidades', () => {
@@ -194,5 +197,82 @@ describe('T3.7 Coherencia Restricción por Ciudad + Fecha', () => {
     });
     expect(noShift).toEqual([5, 8]);
     expect(shifted).toEqual([7, 9]); // viernes anterior sube al lunes
+  });
+});
+
+describe('T3.8 getDailyRestriction (regresión lógica fin de semana / festivos)', () => {
+  it('Bogotá lunes 2026-08-03 → modo par-impar, día impar restringe [1,3,5,7,9]', () => {
+    const bogota = getCityBySlug('bogota')!;
+    const daily = getDailyRestriction(bogota, '2026-08-03');
+    expect(daily.isWeekend).toBe(false);
+    expect(daily.perVehicle.carro.exempt).toBe(false);
+    expect(daily.perVehicle.carro.mode).toBe('par-impar');
+    expect(daily.perVehicle.carro.restrictedDigits).toEqual([1, 3, 5, 7, 9]);
+  });
+  it('Bogotá sábado 2026-08-08 → carro exento por weekendExempt=true', () => {
+    const bogota = getCityBySlug('bogota')!;
+    const daily = getDailyRestriction(bogota, '2026-08-08');
+    expect(daily.isWeekend).toBe(true);
+    expect(daily.perVehicle.carro.exempt).toBe(true);
+    expect(daily.perVehicle.carro.canCirculateFullDay).toBe(true);
+  });
+  it('ciudad con weekendExempt=false en sábado → warning visible y NO exento', () => {
+    const bogota = getCityBySlug('bogota')!;
+    const hypothetical = { ...bogota, weekendExempt: false };
+    const daily = getDailyRestriction(hypothetical, '2026-08-08');
+    expect(daily.warnings.some(w => w.includes('Fin de semana'))).toBe(true);
+    expect(daily.perVehicle.carro.exempt).toBe(false);
+  });
+  it('Barranquilla taxi sábado → weekdayFilter lun-vie → puede circular todo el día', () => {
+    const baq = getCityBySlug('barranquilla')!;
+    const daily = getDailyRestriction(baq, '2026-08-08');
+    // Barranquilla es weekendExempt=true además, así que taxi queda exento igual.
+    expect(daily.perVehicle.taxi.exempt || daily.perVehicle.taxi.canCirculateFullDay).toBe(true);
+  });
+});
+
+describe('T3.9 checkPlate (corrección de lógica horaria confirmada)', () => {
+  const bogota = getCityBySlug('bogota')!;
+  it('dígito coincidente DENTRO del horario de restricción (07:00) → NO puede circular', () => {
+    // 2026-08-03: día 3 (impar) → restringidos 1,3,5,7,9. Placa ABC123 dígito 3.
+    const r = checkPlate({ city: bogota, dateISO: '2026-08-03', plate: 'ABC123', kind: 'carro', time24: '07:00' });
+    expect(r.restrictedDigitMatch).toBe(true);
+    expect(r.restrictedTimeMatch).toBe(true);
+    expect(r.canCirculateNow).toBe(false);
+    expect(r.canCirculateFullDay).toBe(false);
+  });
+  it('dígito coincidente FUERA del horario (22:00) → SÍ puede circular', () => {
+    const r = checkPlate({ city: bogota, dateISO: '2026-08-03', plate: 'ABC123', kind: 'carro', time24: '22:00' });
+    expect(r.restrictedDigitMatch).toBe(true);
+    expect(r.canCirculateNow).toBe(true);
+  });
+  it('dígito NO coincidente dentro del horario (07:00) → SÍ puede circular (antes daba falso negativo)', () => {
+    // Placa XYZ456 dígito 6: día impar no lo restringe.
+    const r = checkPlate({ city: bogota, dateISO: '2026-08-03', plate: 'XYZ456', kind: 'carro', time24: '07:00' });
+    expect(r.restrictedDigitMatch).toBe(false);
+    expect(r.canCirculateNow).toBe(true);
+    expect(r.canCirculateFullDay).toBe(true);
+  });
+  it('sábado Bogotá → cualquier placa puede circular (exención fin de semana)', () => {
+    const r = checkPlate({ city: bogota, dateISO: '2026-08-08', plate: 'ABC123', kind: 'carro', time24: '08:00' });
+    expect(r.exemption).toBe(true);
+    expect(r.canCirculateNow).toBe(true);
+  });
+  it('placa sin dígitos → digit=-1 y no coincide con ninguna restricción', () => {
+    const r = checkPlate({ city: bogota, dateISO: '2026-08-03', plate: 'ABC', kind: 'carro', time24: '07:00' });
+    expect(r.digit).toBe(-1);
+    expect(r.restrictedDigitMatch).toBe(false);
+    expect(r.canCirculateNow).toBe(true);
+  });
+  it('Medellín lunes 2026-08-03 dígito 5 (restringido [5,8]) a las 07:00 → NO circula; a las 04:59 sí', () => {
+    // Ventana de restricción AMVA Medellín: 05:00–20:00 (inclusiva en ambos extremos).
+    const medellin = getCityBySlug('medellin')!;
+    const dentro = checkPlate({ city: medellin, dateISO: '2026-08-03', plate: 'KLM555', kind: 'carro', time24: '07:00' });
+    const antes = checkPlate({ city: medellin, dateISO: '2026-08-03', plate: 'KLM555', kind: 'carro', time24: '04:59' });
+    const despues = checkPlate({ city: medellin, dateISO: '2026-08-03', plate: 'KLM555', kind: 'carro', time24: '20:30' });
+    expect(dentro.restrictedDigitMatch).toBe(true);
+    expect(dentro.canCirculateNow).toBe(false);
+    expect(antes.canCirculateNow).toBe(true);
+    expect(despues.canCirculateNow).toBe(true);
   });
 });

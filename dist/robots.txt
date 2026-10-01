@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api/admin
+
+# Bloquea archivos internos
+Disallow: /*?s=
+Disallow: /*.pdf$
+
+Sitemap: https://picoyplaca.co/sitemap-index.xml
