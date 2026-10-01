@@ -38,6 +38,17 @@ export function numberInAnyList(n: number, lists: Array<number[] | undefined>): 
   return false;
 }
 
+/**
+ * Regla Pico y Placa par-impar por día calendario (Bogotá).
+ * Convención del proyecto, documentada en src/data/cities.ts como
+ * `customRestrictions.parImparRule = 'odd-day-1-5-odd-digits'`:
+ * - Día IMPAR del mes → restringidos dígitos impares (1,3,5,7,9).
+ * - Día PAR del mes   → restringidos dígitos pares (0,2,4,6,8).
+ * (ADVERTENCIA externa, no verificable desde este repo: varios decretos de
+ * movilidad describen la regla al revés — "día par, placa par no circula".
+ * Si se confirma cambio normativo, basta invertir las listas aquí; los tests
+ * T3.1 lo protegen.)
+ */
 export function parImparDigits(dayOfMonth: number): { mode: 'odd' | 'even'; digits: number[] } {
   if (dayOfMonth % 2 === 1) return { mode: 'odd', digits: [1, 3, 5, 7, 9] };
   return { mode: 'even', digits: [0, 2, 4, 6, 8] };
